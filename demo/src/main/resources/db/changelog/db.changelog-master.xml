@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet id="202010211812" author="Mario"  runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+        <not>
+            <tableExists tableName="person"/>
+        </not>
+        </preConditions>
+        <createTable tableName="person">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(250)">
+                <!--<constraints unique="true" uniqueConstraintName="house_owner_unq" />-->
+            </column>
+        </createTable>
+        <createTable tableName="bank_account">
+            <column name="id" type="bigint"  autoIncrement="true">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="name" type="varchar(250)"/>
+            <column name="amount" type="double" />
+            <column name="person_id" type="bigint">
+                <constraints nullable="false" notNullConstraintName="bank_account_person_id_nn" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="bank_account" baseColumnNames="person_id" constraintName="item_house_id_fk" referencedTableName="bank_account" referencedColumnNames="id" />
+        <createSequence sequenceName="hibernate_sequence" incrementBy="1" startValue="1" />
+    </changeSet>
+</databaseChangeLog>
