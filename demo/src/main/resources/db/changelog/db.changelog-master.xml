@@ -22,13 +22,26 @@
             <column name="id" type="bigint"  autoIncrement="true">
                 <constraints primaryKey="true" />
             </column>
-            <column name="name" type="varchar(250)"/>
-            <column name="amount" type="double" />
             <column name="person_id" type="bigint">
                 <constraints nullable="false" notNullConstraintName="account_person_id_nn" />
             </column>
         </createTable>
-        <addForeignKeyConstraint baseTableName="account" baseColumnNames="person_id" constraintName="item_house_id_fk" referencedTableName="account" referencedColumnNames="id" />
+        <createTable tableName="operation">
+            <column name="id" type="bigint"  autoIncrement="true">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="type" type="varchar(16)">
+                <!--<constraints unique="true" uniqueConstraintName="house_owner_unq" />-->
+            </column>
+            <column name="date_time" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="amount" type="double" />
+            <column name="balance" type="double" />
+            <column name="account_id" type="bigint">
+                <constraints nullable="false" notNullConstraintName="account_operation_id_nn" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="account" baseColumnNames="person_id" constraintName="account_person_id_fk" referencedTableName="person" referencedColumnNames="id" />
+        <addForeignKeyConstraint baseTableName="operation" baseColumnNames="account_id" constraintName="operation_account_id_fk" referencedTableName="account" referencedColumnNames="id" />
         <createSequence sequenceName="hibernate_sequence" incrementBy="1" startValue="1" />
     </changeSet>
 </databaseChangeLog>

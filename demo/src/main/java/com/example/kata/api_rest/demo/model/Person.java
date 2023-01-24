@@ -47,4 +47,21 @@ public class Person {
     public void setBankAccounts(Set<Account> accounts) {
         this.accounts = accounts;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (!(o instanceof Person other))
+            return false;
+
+        return id != null &&
+                id.equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

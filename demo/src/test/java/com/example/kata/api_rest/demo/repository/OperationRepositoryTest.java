@@ -1,6 +1,8 @@
 package com.example.kata.api_rest.demo.repository;
 
 import com.example.kata.api_rest.demo.model.Account;
+import com.example.kata.api_rest.demo.model.Operation;
+import com.example.kata.api_rest.demo.model.OperationType;
 import com.example.kata.api_rest.demo.model.Person;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,19 +11,20 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-public class AccountRepositoryTest {
+public class OperationRepositoryTest {
 
     @Autowired
     private TestEntityManager entityManager;
 
     @Autowired
-    private AccountRepository accountRepository;
+    private OperationRepository operationRepository;
 
     @Test
     public void whenFindByPerson_thenReturnBankAccount() {
@@ -33,13 +36,16 @@ public class AccountRepositoryTest {
         account.setPerson(alex);
         entityManager.persist(account);
 
+        Operation operation = new Operation(account, OperationType.DEPOSIT, 0.);
+        entityManager.persist(operation);
+
         entityManager.flush();
 
         // when
-        Set<Account> foundAccounts = accountRepository.findByPerson(alex);
+        List<Operation> foundOperations = operationRepository.findByAccount(account);
 
         // then
-        assertThat(foundAccounts).hasSize(1);
-        assertThat(foundAccounts).contains(account);
+        assertThat(foundOperations).hasSize(1);
+        assertThat(foundOperations).contains(operation);
     }
 }
