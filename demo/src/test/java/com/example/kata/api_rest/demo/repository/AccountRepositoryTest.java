@@ -1,6 +1,6 @@
 package com.example.kata.api_rest.demo.repository;
 
-import com.example.kata.api_rest.demo.model.BankAccount;
+import com.example.kata.api_rest.demo.model.Account;
 import com.example.kata.api_rest.demo.model.Person;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-public class BankAccountRepositoryTest {
+public class AccountRepositoryTest {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -30,17 +30,17 @@ public class BankAccountRepositoryTest {
         Person alex = new Person("alex");
         entityManager.persist(alex);
 
-        BankAccount bankAccount = new BankAccount();
-        bankAccount.setPerson(alex);
-        entityManager.persist(bankAccount);
+        Account account = new Account();
+        account.setPerson(alex);
+        entityManager.persist(account);
 
         entityManager.flush();
 
         // when
-        Set<BankAccount> foundBankAccounts = bankAccountRepository.findByPerson(alex);
+        Set<Account> foundAccounts = bankAccountRepository.findByPerson(alex);
 
         // then
-        assertThat(foundBankAccounts).hasSize(1);
-        assertThat(foundBankAccounts).contains(bankAccount);
+        assertThat(foundAccounts).hasSize(1);
+        assertThat(foundAccounts).contains(account);
     }
 }

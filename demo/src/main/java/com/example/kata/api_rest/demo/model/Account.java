@@ -5,7 +5,7 @@ import com.sun.istack.NotNull;
 import javax.persistence.*;
 
 @Entity
-public class BankAccount {
+public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

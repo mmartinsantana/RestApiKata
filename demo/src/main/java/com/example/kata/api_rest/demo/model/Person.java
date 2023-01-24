@@ -16,7 +16,7 @@ public class Person {
     private String name;
 
     @OneToMany(mappedBy = "person")
-    private Set<BankAccount> bankAccounts;
+    private Set<Account> accounts;
 
     Person() {}
 
@@ -40,11 +40,11 @@ public class Person {
         this.name = name;
     }
 
-    public Set<BankAccount> getBankAccounts() {
-        return bankAccounts;
+    public Set<Account> getBankAccounts() {
+        return accounts;
     }
 
-    public void setBankAccounts(Set<BankAccount> bankAccounts) {
-        this.bankAccounts = bankAccounts;
+    public void setBankAccounts(Set<Account> accounts) {
+        this.accounts = accounts;
     }
 }
