@@ -13,7 +13,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     private Person person;
 
@@ -35,6 +35,7 @@ public class Account {
 
     public void setPerson(Person person) {
         this.person = person;
+        person.addInternalAccount(this);
     }
 
 
@@ -62,6 +63,10 @@ public class Account {
 
     public void setOperations(List<Operation> operations) {
         this.operations = operations;
+    }
+
+    void addInternalOperation(Operation operation) {
+        operations.add(operation);
     }
 
     public double getBalance() {

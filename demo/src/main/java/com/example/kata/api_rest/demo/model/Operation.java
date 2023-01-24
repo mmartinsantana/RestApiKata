@@ -22,7 +22,7 @@ public class Operation {
 
     private double balance;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     private Account account;
 
@@ -31,10 +31,10 @@ public class Operation {
     public Operation(Account account, OperationType type, double amount) {
         this.balance = calcNewBalance(account, type, amount);
 
-        this.account = account;
-        this.type = type;
-        this.amount = amount;
-        this.dateTime = OffsetDateTime.now();
+        setAccount(account);
+        setType(type);
+        setAmount(amount);
+        setDateTime(OffsetDateTime.now());
     }
 
     private static double calcNewBalance(Account account, OperationType newOperationType, double newAmount) {
@@ -84,6 +84,14 @@ public class Operation {
         this.balance = balance;
     }
 
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+        account.addInternalOperation(this);
+    }
 
     @Override
     public boolean equals(Object o) {

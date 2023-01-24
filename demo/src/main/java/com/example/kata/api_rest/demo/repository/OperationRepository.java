@@ -11,5 +11,6 @@ import java.util.Set;
 @Repository
 public interface OperationRepository extends JpaRepository<Operation, Long> {
 
+    // TODO Paginate?
     public List<Operation> findByAccount(Account account);
 }

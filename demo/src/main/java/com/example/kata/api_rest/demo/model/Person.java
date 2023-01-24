@@ -3,6 +3,7 @@ package com.example.kata.api_rest.demo.model;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -16,7 +17,7 @@ public class Person {
     private String name;
 
     @OneToMany(mappedBy = "person")
-    private Set<Account> accounts;
+    private Set<Account> accounts = new HashSet<>();
 
     Person() {}
 
@@ -40,14 +41,22 @@ public class Person {
         this.name = name;
     }
 
-    public Set<Account> getBankAccounts() {
+    public Set<Account> getAccounts() {
         return accounts;
     }
 
-    public void setBankAccounts(Set<Account> accounts) {
+    public void setAccounts(Set<Account> accounts) {
         this.accounts = accounts;
     }
 
+    public void addAccount(Account account) {
+        addInternalAccount(account);
+        account.setPerson(this);
+    }
+
+    void addInternalAccount(Account account) {
+        accounts.add(account);
+    }
 
     @Override
     public boolean equals(Object o) {
