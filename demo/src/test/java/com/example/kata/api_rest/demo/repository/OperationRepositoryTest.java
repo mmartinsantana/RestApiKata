@@ -45,7 +45,8 @@ public class OperationRepositoryTest {
         account.setPerson(alex);
         entityManager.persist(account);
 
-        operation = new Operation(account, OperationType.DEPOSIT, addedAmount);
+        operation = new Operation(OperationType.DEPOSIT, addedAmount);
+        account.addOperation(operation);
         entityManager.persist(operation);
 
         entityManager.flush();
@@ -53,7 +54,7 @@ public class OperationRepositoryTest {
     }
 
     @Test
-    public void testBidirectional() {
+    public void testBidirectional_afterBuild() {
         assertThat(account.getOperations().get(0)).isEqualTo(operation);
         assertThat(operation.getAccount()).isEqualTo(account);
     }
@@ -70,6 +71,8 @@ public class OperationRepositoryTest {
 
         Operation foundOperation = foundOperations.get(0);
         Account foundAccount = foundOperation.getAccount();
+
+        // Bidirectional relation
         assertThat(foundAccount.getBalance()).isEqualTo(addedAmount);
         assertThat(foundAccount.getBalance()).isEqualTo(operation.getBalance());
     }

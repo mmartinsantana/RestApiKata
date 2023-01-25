@@ -69,8 +69,27 @@ public class Account {
         operations.add(operation);
     }
 
+    public void addOperation(Operation operation) {
+        OperationType type = operation.getType();
+        double amount = operation.getAmount();
+
+        double balance = calcNewBalance(type, amount);
+
+        operation.setBalance(balance);
+
+        operation.setAccount(this);
+        operations.add(operation);
+    }
+
+    private double calcNewBalance(OperationType newOperationType, double newAmount) {
+        return switch (newOperationType) {
+            case DEPOSIT -> getBalance() + newAmount;
+            case WITHDRAWAL -> getBalance() - newAmount;
+        };
+    }
+
     public double getBalance() {
-        // TODO: Improve querying last op... rather than loading the full list
+        // TODO: IF operations not loaded -> Improve querying last op... rather than loading the full list
         if (operations.isEmpty()) {
             return 0;
         } else {

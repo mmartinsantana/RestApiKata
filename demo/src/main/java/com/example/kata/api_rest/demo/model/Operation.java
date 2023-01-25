@@ -28,20 +28,10 @@ public class Operation {
 
     Operation() {}
 
-    public Operation(Account account, OperationType type, double amount) {
-        this.balance = calcNewBalance(account, type, amount);
-
-        setAccount(account);
+    public Operation(OperationType type, double amount) {
         setType(type);
         setAmount(amount);
         setDateTime(OffsetDateTime.now());
-    }
-
-    private static double calcNewBalance(Account account, OperationType newOperationType, double newAmount) {
-        return switch (newOperationType) {
-            case DEPOSIT -> account.getBalance() + newAmount;
-            case WITHDRAW -> account.getBalance() - newAmount;
-        };
     }
 
     public Long getId() {
