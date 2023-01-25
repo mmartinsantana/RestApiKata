@@ -5,10 +5,8 @@ import com.example.kata.api_rest.demo.model.Person;
 import com.example.kata.api_rest.demo.repository.AccountRepository;
 import com.example.kata.api_rest.demo.repository.PersonRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +25,13 @@ public class AccountController {
         this.accountRepository = accountRepository;
     }
 
-    @GetMapping(value = "/{id}/")
-    public ResponseEntity<List<Account>> getAccountsForPerson(@PathVariable("id") long id) {
+    @GetMapping(value = "/all")
+    public ResponseEntity<List<Account>> getAccounts() {
+        return ResponseEntity.ok().body(accountRepository.findAll());
+    }
+
+    @GetMapping(value = "/find/{id}")
+    public ResponseEntity<List<Account>> getAccountsForPerson(@PathVariable(value = "id") long id) {
         Optional<Person> person = personRepository.findById(id);
 
         if (person.isPresent()) {
@@ -41,4 +44,5 @@ public class AccountController {
     public void putWithdrawal(Person person, Account account, double amount) {
 
     }
+
 }

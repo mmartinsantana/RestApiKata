@@ -1,5 +1,8 @@
 package com.example.kata.api_rest.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
@@ -15,10 +18,12 @@ public class Account {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
+    @JsonManagedReference // JsonIgnore
     private Person person;
 
     @OneToMany(mappedBy = "account")
     @OrderBy(value = "dateTime")
+    @JsonBackReference // @JsonIgnore
     List<Operation> operations = new ArrayList<>();
 
     public Long getId() {

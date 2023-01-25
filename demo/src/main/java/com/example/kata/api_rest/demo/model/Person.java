@@ -1,5 +1,6 @@
 package com.example.kata.api_rest.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ public class Person {
     private String name;
 
     @OneToMany(mappedBy = "person")
+    @JsonBackReference // @JsonIgnore
     private Set<Account> accounts = new HashSet<>();
 
     Person() {}
