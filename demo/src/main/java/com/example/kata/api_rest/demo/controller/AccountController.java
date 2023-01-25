@@ -18,13 +18,13 @@ import java.util.Optional;
 @RequestMapping("/api/account")
 public class AccountController {
 
-    PersonRepository personRepository;
+    private final PersonRepository personRepository;
 
-    AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
-    @GetMapping(value = "/persons/")
-    public ResponseEntity<List<Person>> getPersons() {
-        return ResponseEntity.ok().body(personRepository.findAll());
+    public AccountController(PersonRepository personRepository, AccountRepository accountRepository) {
+        this.personRepository = personRepository;
+        this.accountRepository = accountRepository;
     }
 
     @GetMapping(value = "/{id}/")
