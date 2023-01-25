@@ -1,5 +1,6 @@
 package com.example.kata.api_rest.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sun.istack.NotNull;
 
@@ -25,7 +26,7 @@ public class Operation {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
-    @JsonManagedReference // JsonIgnore
+    @JsonIgnore // JsonManagedReference
     private Account account;
 
     Operation() {}

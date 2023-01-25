@@ -1,8 +1,11 @@
 package com.example.kata.api_rest.demo.controller;
 
 import com.example.kata.api_rest.demo.model.Account;
+import com.example.kata.api_rest.demo.model.Operation;
+import com.example.kata.api_rest.demo.model.OperationType;
 import com.example.kata.api_rest.demo.model.Person;
 import com.example.kata.api_rest.demo.repository.AccountRepository;
+import com.example.kata.api_rest.demo.repository.OperationRepository;
 import com.example.kata.api_rest.demo.repository.PersonRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,10 +22,13 @@ public class AccountController {
     private final PersonRepository personRepository;
 
     private final AccountRepository accountRepository;
+    private final OperationRepository operationRepository;
 
-    public AccountController(PersonRepository personRepository, AccountRepository accountRepository) {
+    public AccountController(PersonRepository personRepository, AccountRepository accountRepository,
+                             OperationRepository operationRepository) {
         this.personRepository = personRepository;
         this.accountRepository = accountRepository;
+        this.operationRepository = operationRepository;
     }
 
     @GetMapping(value = "/all")
@@ -41,8 +47,24 @@ public class AccountController {
             return ResponseEntity.notFound().build();
         }
     }
-    public void putWithdrawal(Person person, Account account, double amount) {
 
+    @PostMapping(value = "/withdrawal")
+    public ResponseEntity<Operation> widthdraw(@RequestParam long accountId, @RequestParam double amount) {
+
+        Optional<Account> accountOpt = accountRepository.findById(accountId);
+        if (accountOpt.isPresent()) {
+            return createOperationResponse(accountOpt.get(), OperationType.WITHDRAWAL, amount);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+        private ResponseEntity<Operation> createOperationResponse(Account account, OperationType type, double amount) {
+        Operation operation = new Operation(type, amount);
+        account.addOperation(operation);
+        operationRepository.save(operation);  // Should we do cascade on update from account.operations?
+        accountRepository.save(account);
+        return ResponseEntity.ok(operation);
     }
 
 }
