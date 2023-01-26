@@ -70,10 +70,6 @@ public class Account {
         this.operations = operations;
     }
 
-    void addInternalOperation(Operation operation) {
-        operations.add(operation);
-    }
-
     public void addOperation(Operation operation) {
         OperationType type = operation.getType();
         double amount = operation.getAmount();

@@ -83,7 +83,6 @@ public class Operation {
 
     public void setAccount(Account account) {
         this.account = account;
-        account.addInternalOperation(this);
     }
 
     @Override
