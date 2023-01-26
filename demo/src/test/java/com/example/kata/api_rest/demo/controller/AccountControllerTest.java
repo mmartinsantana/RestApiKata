@@ -24,16 +24,12 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.awt.print.Book;
 import java.io.UnsupportedEncodingException;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
 
 @AutoConfigureJsonTesters
 @WebMvcTest(AccountController.class)
@@ -106,5 +102,58 @@ public class AccountControllerTest {
         String dateTime = jsonNode.get("dateTime").asText();
         return OffsetDateTime.parse(dateTime);
     }
+
+
+/*
+    @Test
+    public void testWithdraw_2() throws Exception {
+        // given
+        long accountId = 2;
+        double withdrawnAmount = 2;
+
+        Person person = new Person("Test");
+        person.setId(1L);
+        Account account = new Account();
+        account.setId(accountId);
+        account.setPerson(person);
+
+        given(accountRepository.findById(2L))
+                .willReturn(Optional.of(account));
+
+        Operation operation = new Operation(OperationType.WITHDRAWAL, withdrawnAmount);
+        operation.setAccount(account);
+        operation.setBalance(-withdrawnAmount);
+
+        // when
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post(AccountController.PATH + AccountController.SUB_PATH_WITHDRAW)
+                .accept(MediaType.APPLICATION_JSON)
+                .queryParam("accountId", String.valueOf(accountId))
+                .queryParam("amount", String.valueOf(withdrawnAmount))
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        MockHttpServletResponse response = result.getResponse();
+
+
+        // then
+        OffsetDateTime dateTime = getOffsetDateTime(response);
+        operation.setDateTime(dateTime);
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(json.write(operation).toString())
+                .contains(response.getContentAsString());
+
+        when()
+
+        when(employeeDAO.getAllEmployees()).thenReturn(employees);
+
+        Employees result = employeeController.getEmployees();
+
+        assertThat(result.getEmployeeList().size()).isEqualTo(2);
+        assertThat(result.getEmployeeList().get(0).getFirstName()).isEqualTo(employee1.getFirstName());
+        assertThat(result.getEmployeeList().get(1).getFirstName()).isEqualTo(employee2.getFirstName());
+    }*/
 
 }
