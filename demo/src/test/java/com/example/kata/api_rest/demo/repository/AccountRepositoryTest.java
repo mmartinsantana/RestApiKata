@@ -2,7 +2,6 @@ package com.example.kata.api_rest.demo.repository;
 
 import com.example.kata.api_rest.demo.model.Account;
 import com.example.kata.api_rest.demo.model.Person;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,9 +24,9 @@ public class AccountRepositoryTest {
     @Autowired
     private AccountRepository accountRepository;
 
-    Person alex;
+    private Person alex;
 
-    Account account;
+    private Account account;
 
     @BeforeEach
     public void setUp() {

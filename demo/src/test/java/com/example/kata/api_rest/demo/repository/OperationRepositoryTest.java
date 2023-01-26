@@ -4,7 +4,6 @@ import com.example.kata.api_rest.demo.model.Account;
 import com.example.kata.api_rest.demo.model.Operation;
 import com.example.kata.api_rest.demo.model.OperationType;
 import com.example.kata.api_rest.demo.model.Person;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,11 +26,11 @@ public class OperationRepositoryTest {
     @Autowired
     private OperationRepository operationRepository;
 
-    Person alex;
+    private Person alex;
 
-    Account account;
+    private Account account;
 
-    Operation operation;
+    private Operation operation;
 
     double addedAmount = 1.;
 

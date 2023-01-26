@@ -5,7 +5,6 @@ import com.example.kata.api_rest.demo.model.Operation;
 import com.example.kata.api_rest.demo.model.OperationType;
 import com.example.kata.api_rest.demo.repository.AccountRepository;
 import com.example.kata.api_rest.demo.repository.OperationRepository;
-import com.example.kata.api_rest.demo.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,13 +12,10 @@ import java.util.Optional;
 @Service
 public class AccountService {
 
-    private final PersonRepository personRepository;
-
     private final AccountRepository accountRepository;
     private final OperationRepository operationRepository;
 
-    public AccountService(PersonRepository personRepository, AccountRepository accountRepository, OperationRepository operationRepository) {
-        this.personRepository = personRepository;
+    public AccountService(AccountRepository accountRepository, OperationRepository operationRepository) {
         this.accountRepository = accountRepository;
         this.operationRepository = operationRepository;
     }
