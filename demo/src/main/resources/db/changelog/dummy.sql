@@ -18,3 +18,5 @@ insert into operation values (nextval('HIBERNATE_SEQUENCE'), 2, 2,  {ts '2012-09
 
 # curl -d "accountId=1&amount=2" -X POST http://localhost:8080/api/account/withdrawal
 
+# curl -u rest:restPassword -d "accountId=1&amount=2" -X POST http://localhost:8080/api/account/withdrawal
+
