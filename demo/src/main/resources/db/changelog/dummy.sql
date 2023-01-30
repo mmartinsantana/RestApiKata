@@ -7,7 +7,11 @@ ALTER SEQUENCE HIBERNATE_SEQUENCE RESTART WITH 3
 
 insert into person values (nextval('HIBERNATE_SEQUENCE'),'Mario');
 insert into account values (nextval('HIBERNATE_SEQUENCE'), 1);
-insert into operation values (nextval('HIBERNATE_SEQUENCE'), 2, 2,  {ts '2012-09-17 18:47:52.69'}, 'DEPOSIT', 2);
+insert into operation values (nextval('HIBERNATE_SEQUENCE'), 2, 2,  current_timestamp, 'DEPOSIT', 2);
+
+
+# h2
+# insert into operation values (nextval('HIBERNATE_SEQUENCE'), 2, 2,  {ts '2012-09-17 18:47:52.69'}, 'DEPOSIT', 2);
 
 # http://localhost:8080/h2-console/login.do
 
@@ -16,7 +20,7 @@ insert into operation values (nextval('HIBERNATE_SEQUENCE'), 2, 2,  {ts '2012-09
 # http://localhost:8080/api/account/withdrawal?account=1&amount=2
 
 
-# curl -d "accountId=1&amount=2" -X POST http://localhost:8080/api/account/withdrawal
+# curl -d "accountId=2&amount=2" -X POST http://localhost:8080/api/account/withdrawal
 
-# curl -u rest:restPassword -d "accountId=1&amount=2" -X POST http://localhost:8080/api/account/withdrawal
+# curl -u rest:restPass -d "accountId=2&amount=2" -X POST http://localhost:8080/api/account/withdrawal
 
