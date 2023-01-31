@@ -1,3 +1,4 @@
+# mvn package -Pprod
 # docker-compose up --build
 # docker-compose down
 
