@@ -20,6 +20,8 @@ public class AccountController {
 
     public static final String SUB_PATH_WITHDRAW = "/withdrawal";
 
+    public static final String SUB_PATH_DEPOSIT = "/deposit";
+
     private final AccountService accountService;
 
     private final AccountRepository accountRepository;
@@ -49,6 +51,13 @@ public class AccountController {
     @PostMapping(value = SUB_PATH_WITHDRAW)
     public ResponseEntity<Operation> withdraw(@RequestParam long accountId, @RequestParam double amount) {
         Optional<Operation> operation = accountService.withdraw(accountId, amount);
+
+        return operation.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping(value = SUB_PATH_DEPOSIT)
+    public ResponseEntity<Operation> deposit(@RequestParam long accountId, @RequestParam double amount) {
+        Optional<Operation> operation = accountService.deposit(accountId, amount);
 
         return operation.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }

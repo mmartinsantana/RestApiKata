@@ -6,6 +6,7 @@ import com.example.kata.api_rest.demo.model.OperationType;
 import com.example.kata.api_rest.demo.model.Person;
 import com.example.kata.api_rest.demo.repository.AccountRepository;
 import com.example.kata.api_rest.demo.service.AccountService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,27 +32,36 @@ public class AccountControllerTest {
     @Mock
     private AccountRepository accountRepository;
 
+    private final long ACCOUNT_ID = 2;
+
+    private Person person;
+
+    private Account account;
+
+    @BeforeEach
+    private void setUp() {
+        person = new Person("Test");
+        person.setId(1L);
+
+        account = new Account();
+        account.setId(ACCOUNT_ID);
+        account.setPerson(person);
+    }
+
+
     @Test
     public void testWithdraw() throws Exception {
         // given
-        long accountId = 2;
         double withdrawnAmount = 2;
-
-        Person person = new Person("Test");
-        person.setId(1L);
-
-        Account account = new Account();
-        account.setId(accountId);
-        account.setPerson(person);
 
         Operation operation = new Operation(OperationType.WITHDRAWAL, withdrawnAmount);
         account.addOperation(operation);
 
         // when
-        when(accountService.withdraw(accountId,withdrawnAmount)).thenReturn(Optional.of(operation));
+        when(accountService.withdraw(ACCOUNT_ID,withdrawnAmount)).thenReturn(Optional.of(operation));
 
         // then
-        ResponseEntity<Operation> responseEntity = accountController.withdraw(accountId, withdrawnAmount);
+        ResponseEntity<Operation> responseEntity = accountController.withdraw(ACCOUNT_ID, withdrawnAmount);
 
         // TODO: should we return 201 (created + path to operation?)
         // assertThat(responseEntity.getStatusCodeValue()).isEqualTo(201);
@@ -62,5 +72,33 @@ public class AccountControllerTest {
         Operation returnedOperation = responseEntity.getBody();
         assertThat(returnedOperation).isEqualTo(operation);
     }
+
+    @Test
+    public void testDeposit() throws Exception {
+        // given
+        double savedAmount = 3;
+
+        Operation operation = new Operation(OperationType.DEPOSIT, savedAmount);
+        account.addOperation(operation);
+
+        // when
+        when(accountService.withdraw(ACCOUNT_ID,savedAmount)).thenReturn(Optional.of(operation));
+
+        // then
+        ResponseEntity<Operation> responseEntity = accountController.withdraw(ACCOUNT_ID, savedAmount);
+
+        // TODO: should we return 201 (created + path to operation?)
+        // assertThat(responseEntity.getStatusCodeValue()).isEqualTo(201);
+        // assertThat(responseEntity.getHeaders().getLocation().getPath()).isEqualTo("/1");
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        Operation returnedOperation = responseEntity.getBody();
+        assertThat(returnedOperation).isEqualTo(operation);
+    }
+
+
+
+
 
 }

@@ -39,6 +39,9 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 @AutoConfigureJsonTesters
 @WebMvcTest(AccountController.class)
 public class AccountControllerIntegrationTest {
+
+    private final static long ACCOUNT_ID = 2;
+
     @MockBean
     private AccountRepository accountRepository;
 
@@ -59,28 +62,31 @@ public class AccountControllerIntegrationTest {
     @Autowired
     private WebApplicationContext context;
 
+    private Person person;
+
+    private Account account;
+
     @BeforeEach
     public void setup() {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(springSecurity())
                 .build();
+
+        person = new Person("Test");
+        person.setId(1L);
+
+        account = new Account();
+        account.setId(ACCOUNT_ID);
+        account.setPerson(person);
     }
 
     @Test
     public void withdraw() throws Exception {
         // given
-        long accountId = 2;
         double withdrawnAmount = 2;
-        
-        Person person = new Person("Test");
-        person.setId(1L);
 
-        Account account = new Account();
-        account.setId(accountId);
-        account.setPerson(person);
-
-        given(accountRepository.findById(accountId))
+        given(accountRepository.findById(ACCOUNT_ID))
                 .willReturn(Optional.of(account));
 
         Operation operation = new Operation(OperationType.WITHDRAWAL, withdrawnAmount);
@@ -91,7 +97,7 @@ public class AccountControllerIntegrationTest {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(AccountController.PATH + AccountController.SUB_PATH_WITHDRAW)
                 .accept(MediaType.APPLICATION_JSON)
-                .queryParam("accountId", String.valueOf(accountId))
+                .queryParam("accountId", String.valueOf(ACCOUNT_ID))
                 .queryParam("amount", String.valueOf(withdrawnAmount))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(httpBasic("rest", "restPass"));
@@ -115,6 +121,39 @@ public class AccountControllerIntegrationTest {
         JsonNode jsonNode = mapper.readTree(response.getContentAsString());
         String dateTime = jsonNode.get("dateTime").asText();
         return OffsetDateTime.parse(dateTime);
+    }
+
+    @Test
+    public void testDeposit() throws Exception {
+        // given
+        double savedAmount = 3;
+
+        given(accountRepository.findById(ACCOUNT_ID))
+                .willReturn(Optional.of(account));
+
+        Operation operation = new Operation(OperationType.DEPOSIT, savedAmount);
+        operation.setAccount(account);
+        operation.setBalance(savedAmount);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post(AccountController.PATH + AccountController.SUB_PATH_DEPOSIT)
+                .accept(MediaType.APPLICATION_JSON)
+                .queryParam("accountId", String.valueOf(ACCOUNT_ID))
+                .queryParam("amount", String.valueOf(savedAmount))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(httpBasic("rest", "restPass"));
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        MockHttpServletResponse response = result.getResponse();
+
+        // then
+        OffsetDateTime dateTime = getOffsetDateTime(response);
+        operation.setDateTime(dateTime);
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(json.write(operation).toString())
+                .contains(response.getContentAsString());
     }
 
 }

@@ -26,6 +26,12 @@ public class AccountService {
         return accountOpt.flatMap(account -> createOperationResponse(account, OperationType.WITHDRAWAL, amount));
     }
 
+    public Optional<Operation> deposit(long accountId, double amount) {
+        Optional<Account> accountOpt = accountRepository.findById(accountId);
+
+        return accountOpt.flatMap(account -> createOperationResponse(account, OperationType.DEPOSIT, amount));
+    }
+
     private Optional<Operation> createOperationResponse(Account account, OperationType type, double amount) {
         Operation operation = new Operation(type, amount);
         account.addOperation(operation);
