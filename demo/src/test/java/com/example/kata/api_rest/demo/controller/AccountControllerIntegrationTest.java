@@ -10,6 +10,8 @@ import com.example.kata.api_rest.demo.repository.PersonRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @AutoConfigureJsonTesters
 @WebMvcTest(AccountController.class)
@@ -82,7 +85,7 @@ public class AccountControllerIntegrationTest {
     }
 
     @Test
-    public void withdraw() throws Exception {
+    public void withdrawUsingPostWithParameters() throws Exception {
         // given
         double withdrawnAmount = 2;
 
@@ -114,6 +117,61 @@ public class AccountControllerIntegrationTest {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(json.write(operation).toString())
                 .contains(response.getContentAsString());
+    }
+
+    @Test
+    public void withdrawUsingPostWithBody() throws Exception {
+        // given
+        double withdrawnAmount = 2;
+
+        given(accountRepository.findById(ACCOUNT_ID))
+                .willReturn(Optional.of(account));
+
+        Operation operation = new Operation(OperationType.WITHDRAWAL, withdrawnAmount);
+        operation.setAccount(account);
+        operation.setBalance(-withdrawnAmount);
+
+        System.out.println("HEY " + json.write(operation).toString());
+
+        // when
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post(AccountController.PATH + "/operation")
+                .accept(MediaType.APPLICATION_JSON)
+                .content(asJsonString(operation))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(httpBasic("rest", "restPass"));
+
+        MvcResult result = mockMvc
+                .perform(requestBuilder)
+                .andExpect(jsonPath("$.account.id").value(operation.getAccount().getId()))
+                .andExpect(jsonPath("$.amount").value(operation.getAmount()))
+                .andExpect(jsonPath("$.balance").value(operation.getBalance()))
+                .andExpect(jsonPath("$.type").value(operation.getType().name()))
+                .andReturn();
+
+        MockHttpServletResponse response = result.getResponse();
+
+        // then
+        OffsetDateTime dateTime = getOffsetDateTime(response);
+        operation.setDateTime(dateTime);
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        // Duplicated with andExpect above ;)
+        assertThat(json.write(operation).toString())
+                .contains(response.getContentAsString());
+    }
+
+    public static String asJsonString(final Object obj) {
+        try {
+
+            ObjectMapper objectMapper = JsonMapper.builder()
+                    .addModule(new JavaTimeModule())
+                    .build();
+
+            return objectMapper.writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static OffsetDateTime getOffsetDateTime(MockHttpServletResponse response) throws JsonProcessingException, UnsupportedEncodingException {

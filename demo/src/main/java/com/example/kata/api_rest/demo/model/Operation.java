@@ -1,13 +1,16 @@
 package com.example.kata.api_rest.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
 
 @Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Operation {
 
     @Id
@@ -26,7 +29,7 @@ public class Operation {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
-    @JsonIgnore // JsonManagedReference
+    //@JsonBackReference // @JsonIgnore
     private Account account;
 
     Operation() {}

@@ -1,6 +1,7 @@
 package com.example.kata.api_rest.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
@@ -8,6 +9,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Person {
 
     @Id
@@ -18,7 +22,7 @@ public class Person {
     private String name;
 
     @OneToMany(mappedBy = "person")
-    @JsonBackReference // @JsonIgnore
+    //@JsonManagedReference // @JsonIgnore
     private Set<Account> accounts = new HashSet<>();
 
     Person() {}

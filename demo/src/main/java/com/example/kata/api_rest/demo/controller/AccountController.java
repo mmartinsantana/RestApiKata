@@ -4,6 +4,7 @@ import com.example.kata.api_rest.demo.model.Account;
 import com.example.kata.api_rest.demo.model.Operation;
 import com.example.kata.api_rest.demo.repository.AccountRepository;
 import com.example.kata.api_rest.demo.service.AccountService;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,6 +63,19 @@ public class AccountController {
         return operation.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PostMapping(value = "/operation")
+    public ResponseEntity<Operation> operate(@RequestBody Operation operationIn) {
 
+        Optional<Operation> operationOut;
+
+        switch(operationIn.getType())
+        {
+            case WITHDRAWAL -> operationOut = accountService.withdraw(operationIn.getAccount().getId(), operationIn.getAmount());
+            case DEPOSIT -> operationOut = accountService.deposit(operationIn.getAccount().getId(), operationIn.getAmount());
+            default -> throw new NotImplementedException();
+        }
+
+        return operationOut.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
 }
