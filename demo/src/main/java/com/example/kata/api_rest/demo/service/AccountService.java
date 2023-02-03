@@ -6,6 +6,7 @@ import com.example.kata.api_rest.demo.model.OperationType;
 import com.example.kata.api_rest.demo.repository.AccountRepository;
 import com.example.kata.api_rest.demo.repository.OperationRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -20,19 +21,28 @@ public class AccountService {
         this.operationRepository = operationRepository;
     }
 
+    @Transactional
     public Optional<Operation> withdraw(long accountId, double amount) {
-        Optional<Account> accountOpt = accountRepository.findById(accountId);
 
-        return accountOpt.flatMap(account -> createOperationResponse(account, OperationType.WITHDRAWAL, amount));
+
+        return createOperationResponse(accountId, OperationType.WITHDRAWAL, amount);
     }
 
+    @Transactional
     public Optional<Operation> deposit(long accountId, double amount) {
-        Optional<Account> accountOpt = accountRepository.findById(accountId);
-
-        return accountOpt.flatMap(account -> createOperationResponse(account, OperationType.DEPOSIT, amount));
+        return createOperationResponse(accountId, OperationType.DEPOSIT, amount);
     }
 
-    private Optional<Operation> createOperationResponse(Account account, OperationType type, double amount) {
+
+    private Optional<Operation> createOperationResponse(long accountId, OperationType type, double amount) {
+        Optional<Account> accountOpt = accountRepository.findById(accountId);
+        if (!accountOpt.isPresent())
+        {
+            return Optional.empty();
+        }
+
+        Account account = accountOpt.get();
+
         Operation operation = new Operation(type, amount);
         account.addOperation(operation);
         operationRepository.save(operation);  // Should we do cascade on update from account.operations?
