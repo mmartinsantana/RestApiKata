@@ -14,7 +14,7 @@ import java.time.OffsetDateTime;
 public class Operation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
