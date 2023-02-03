@@ -86,3 +86,6 @@ mvn package -Pprod
 docker-compose up --build
 docker-compose down 
 ```
+# TODO
+1. Run tests with h2 !! Test by running app first ;)
+2. versioning https://stackoverflow.com/questions/20198275/how-to-manage-rest-api-versioning-with-spring
