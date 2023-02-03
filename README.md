@@ -17,8 +17,18 @@ http://localhost:8080/api/account/find/1
 ## POST
 ### Withdraw 2 from account id=2
 Authoritation won't? work from the browser due to the redirection
+#### Before
 ```
 http://localhost:8080/api/account/withdrawal?account=1&amount=2
+```
+#### Now:
+```
+- http://localhost:8080/api/account/operation
+{
+  "type":"WITHDRAWAL",
+  "amount":2.0,
+  "account":{"id":2}
+} 
 ```
 ### A REST client is required, such as curl
 ```
