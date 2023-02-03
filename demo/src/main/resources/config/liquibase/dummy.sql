@@ -24,3 +24,8 @@ insert into operation values (nextval('HIBERNATE_SEQUENCE'), 2, 2,  current_time
 
 # curl -u rest:restPass -d "accountId=2&amount=2" -X POST http://localhost:8080/api/account/withdrawal
 
+
+
+select * from person;
+select * from account;
+select * from operation;
