@@ -23,4 +23,13 @@
                 usePreparedStatements="false">
         </loadData>
     </changeSet>
+
+    <changeSet id="20230201152108-2" author="Mario" context="faker" runAlways="false" runOnChange="true">
+        <loadData
+                file="config/liquibase/fake-data/account.csv"
+                separator=";"
+                tableName="account"
+                usePreparedStatements="false">
+        </loadData>
+    </changeSet>
 </databaseChangeLog>
