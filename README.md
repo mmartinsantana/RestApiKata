@@ -40,8 +40,15 @@ curl -u rest:restPass -d "accountId=2&amount=2" -X POST http://localhost:8080/ap
 ## Development profile - dev
 
 mvn build -Pdev
-
 ### h2 database.
+#### Schema with liquibase
+```
+mvn liquibase:generateChangeLog
+```
+Output: resources/config/liquibase/changelog/${maven.build.timestamp}_changelog_dev.xml
+#### Data
+Data can be loaded by Liquibase: config/liquibase/changelog/20230201152108_test_data.xml
+Or with SQLd:
 ```
 insert into person values (1,'Mario');
 insert into account values (1, 1);
