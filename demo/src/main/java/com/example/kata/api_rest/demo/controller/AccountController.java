@@ -2,9 +2,9 @@ package com.example.kata.api_rest.demo.controller;
 
 import com.example.kata.api_rest.demo.model.Account;
 import com.example.kata.api_rest.demo.model.Operation;
+import com.example.kata.api_rest.demo.model.OperationType;
 import com.example.kata.api_rest.demo.repository.AccountRepository;
 import com.example.kata.api_rest.demo.service.AccountService;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,29 +51,23 @@ public class AccountController {
 
     @PostMapping(value = SUB_PATH_WITHDRAW)
     public ResponseEntity<Operation> withdraw(@RequestParam long accountId, @RequestParam double amount) {
-        Optional<Operation> operation = accountService.withdraw(accountId, amount);
+        Optional<Operation> operation = accountService.execute(OperationType.WITHDRAWAL, accountId, amount);
 
         return operation.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping(value = SUB_PATH_DEPOSIT)
     public ResponseEntity<Operation> deposit(@RequestParam long accountId, @RequestParam double amount) {
-        Optional<Operation> operation = accountService.deposit(accountId, amount);
+        Optional<Operation> operation = accountService.execute(OperationType.DEPOSIT, accountId, amount);
 
         return operation.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping(value = "/operation")
     public ResponseEntity<Operation> operate(@RequestBody Operation operationIn) {
+        OperationType operationType = operationIn.getType();
 
-        Optional<Operation> operationOut;
-
-        switch(operationIn.getType())
-        {
-            case WITHDRAWAL -> operationOut = accountService.withdraw(operationIn.getAccount().getId(), operationIn.getAmount());
-            case DEPOSIT -> operationOut = accountService.deposit(operationIn.getAccount().getId(), operationIn.getAmount());
-            default -> throw new NotImplementedException();
-        }
+        Optional<Operation> operationOut = accountService.execute(operationType, operationIn.getAccount().getId(), operationIn.getAmount());
 
         return operationOut.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
