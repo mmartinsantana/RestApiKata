@@ -25,6 +25,10 @@ public class Person {
     //@JsonManagedReference // @JsonIgnore
     private Set<Account> accounts = new HashSet<>();
 
+    @OneToMany(mappedBy = "person")
+    //@JsonManagedReference // @JsonIgnore
+    private Set<AppUser> appUsers = new HashSet<>();
+
     Person() {}
 
     public Person(String name) {

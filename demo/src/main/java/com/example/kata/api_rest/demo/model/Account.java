@@ -26,7 +26,10 @@ public class Account {
     @OneToMany(mappedBy = "account")
     @OrderBy(value = "dateTime")
     //@JsonManagedReference // @JsonIgnore
-    List<Operation> operations = new ArrayList<>();
+    private List<Operation> operations = new ArrayList<>();
+
+    public Account() {
+    }
 
     public Long getId() {
         return id;
