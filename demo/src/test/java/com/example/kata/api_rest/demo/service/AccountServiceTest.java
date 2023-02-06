@@ -49,7 +49,7 @@ public class AccountServiceTest {
         when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
 
         // then
-        Optional<Operation> operationOpt = accountService.withdraw(accountId, withdrawnAmount);
+        Optional<Operation> operationOpt = accountService.execute(OperationType.WITHDRAWAL, accountId, withdrawnAmount);
 
         assertTrue(operationOpt.isPresent());
         Operation operation = operationOpt.get();

@@ -22,19 +22,7 @@ public class AccountService {
     }
 
     @Transactional
-    public Optional<Operation> withdraw(long accountId, double amount) {
-
-
-        return createOperationResponse(accountId, OperationType.WITHDRAWAL, amount);
-    }
-
-    @Transactional
-    public Optional<Operation> deposit(long accountId, double amount) {
-        return createOperationResponse(accountId, OperationType.DEPOSIT, amount);
-    }
-
-
-    private Optional<Operation> createOperationResponse(long accountId, OperationType type, double amount) {
+    public Optional<Operation> execute(OperationType type, long accountId, double amount) {
         Optional<Account> accountOpt = accountRepository.findById(accountId);
         if (!accountOpt.isPresent())
         {

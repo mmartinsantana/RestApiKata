@@ -58,7 +58,7 @@ public class AccountControllerTest {
         account.addOperation(operation);
 
         // when
-        when(accountService.withdraw(ACCOUNT_ID,withdrawnAmount)).thenReturn(Optional.of(operation));
+        when(accountService.execute(OperationType.WITHDRAWAL, ACCOUNT_ID,withdrawnAmount)).thenReturn(Optional.of(operation));
 
         // then
         ResponseEntity<Operation> responseEntity = accountController.withdraw(ACCOUNT_ID, withdrawnAmount);
@@ -82,7 +82,7 @@ public class AccountControllerTest {
         account.addOperation(operation);
 
         // when
-        when(accountService.withdraw(ACCOUNT_ID,savedAmount)).thenReturn(Optional.of(operation));
+        when(accountService.execute(OperationType.WITHDRAWAL, ACCOUNT_ID,savedAmount)).thenReturn(Optional.of(operation));
 
         // then
         ResponseEntity<Operation> responseEntity = accountController.withdraw(ACCOUNT_ID, savedAmount);
