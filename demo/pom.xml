@@ -15,6 +15,8 @@
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
+		<liquibase.version>4.19.0</liquibase.version>
+		<validation-api.version>2.0.1.Final</validation-api.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -62,7 +64,7 @@
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
-			<version>4.19.0</version>
+			<version>${liquibase.version}</version>
 		</dependency>
 
 		<dependency>
@@ -76,6 +78,34 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<version>${liquibase.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.liquibase</groupId>
+						<artifactId>liquibase-core</artifactId>
+						<version>${liquibase.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.liquibase.ext</groupId>
+						<artifactId>liquibase-hibernate5</artifactId>
+						<version>4.19.0</version>
+					</dependency>
+					<dependency>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-starter-data-jpa</artifactId>
+						<version>2.7.9-SNAPSHOT</version>
+					</dependency>
+					<dependency>
+						<groupId>javax.validation</groupId>
+						<artifactId>validation-api</artifactId>
+						<version>${validation-api.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
@@ -109,7 +139,42 @@
 			</dependencies>
 			<properties>
 				<activatedProperties>dev</activatedProperties>
+				<timestamp>${maven.build.timestamp}</timestamp>
+				<maven.build.timestamp.format>yyyy-MM-dd_HH_mm</maven.build.timestamp.format>
 			</properties>
+			<build>
+			<plugins>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+				</plugin>
+
+				<plugin>
+					<groupId>org.liquibase</groupId>
+					<artifactId>liquibase-maven-plugin</artifactId>
+					<version>${liquibase.version}</version>
+					<configuration>
+						<diffChangeLogFile>${project.basedir}/src/main/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog.xml</diffChangeLogFile>
+						<outputChangeLogFile>${project.basedir}/src/main/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog_dev.xml</outputChangeLogFile>
+						<driver>org.h2.Driver</driver>
+						<url>jdbc:h2:~/liquibase</url>
+						<defaultSchemaName></defaultSchemaName>
+						<username>sa</username>
+						<password></password>
+						<!--<referenceUrl>hibernate:spring:com.sfeir.test.domain?dialect=org.hibernate.dialect.H2Dialect&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>-->
+						<verbose>true</verbose>
+						<logging>debug</logging>
+						<contexts>!test</contexts>
+					</configuration>
+					<dependencies>
+						<!--<dependency>
+							<groupId>com.h2database</groupId>
+							<artifactId>h2</artifactId>
+						</dependency>-->
+					</dependencies>
+				</plugin>
+			</plugins>
+			</build>
 		</profile>
 	</profiles>
 
