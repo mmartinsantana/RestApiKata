@@ -9,5 +9,6 @@
     <include file="config/liquibase/changelog/20230111152108_initial_schema.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20230201152108_test_data.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20230206152108_app_user.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20230207152108_authority.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

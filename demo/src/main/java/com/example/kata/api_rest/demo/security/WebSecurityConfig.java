@@ -1,15 +1,15 @@
 package com.example.kata.api_rest.demo.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+import javax.sql.DataSource;
 
 /**
  * https://www.baeldung.com/spring-security-login
@@ -61,21 +61,14 @@ public class WebSecurityConfig {
 		// ...
 	}
 
-	@Bean
-	public InMemoryUserDetailsManager userDetailsService() {
-		UserDetails user1 = User.withUsername("user1")
-				.password(passwordEncoder().encode("user1Pass"))
-				.roles("USER")
-				.build();
-		UserDetails rest = User.withUsername("rest")
-				.password(passwordEncoder().encode("restPass"))
-				.roles("REST")
-				.build();
-		return new InMemoryUserDetailsManager(user1, rest);
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth, DataSource dataSource, PasswordEncoder passwordEncoder) throws Exception {
+		auth.jdbcAuthentication().dataSource(dataSource)
+				.usersByUsernameQuery("select user_name as username, pass as password, true"
+						+ " from app_user where user_name=?")
+				.authoritiesByUsernameQuery("select user_name as username, authority"
+						+ " from app_user u join app_user_authorities ua on u.id=ua.app_user_id join authority a on ua.authorities_id = a.id where user_name=?");
 	}
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+
 }

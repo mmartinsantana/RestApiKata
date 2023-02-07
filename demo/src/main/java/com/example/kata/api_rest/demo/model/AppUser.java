@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @JsonIdentityInfo(
@@ -21,6 +22,9 @@ public class AppUser {
     @NotNull
     //@JsonBackReference // JsonIgnore
     private Person person;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    List<Authority> authorities;
 
     private String userName;
 

@@ -6,7 +6,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-<changeSet id="20230206152108-1" author="Mario"  runAlways="true" runOnChange="true">
+<changeSet id="20230206152108-1" author="Mario"  runAlways="false" runOnChange="true">
     <preConditions onFail="MARK_RAN">
         <not>
             <tableExists tableName="app_user"/>
@@ -31,5 +31,19 @@
                 tableName="app_user"
                 usePreparedStatements="false">
         </loadData>
+
     </changeSet>
+
+    <!-- https://stackoverflow.com/questions/50863009/does-liquibase-or-any-plug-ins-support-data-encryption-for-sql-insert-update-st -->
+<!--
+    <changeSet id="20230206152108-3" author="Mario" context="faker" runAlways="true" runOnChange="true">
+            <preConditions onFail="MARK_RAN">
+                <columnExists tableName="app_user" columnName="pass"/>
+            </preConditions>
+            <comment>encrypt passwords</comment>
+            <sql>
+                UPDATE `app_user` SET `pass` = ENCRYPT("pass", "key_str", 'aes');
+            </sql>
+        </changeSet>
+-->
 </databaseChangeLog>
