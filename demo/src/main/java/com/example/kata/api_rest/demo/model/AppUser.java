@@ -15,7 +15,10 @@ import java.util.Set;
 public class AppUser {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "app_user_sequence",
+            sequenceName = "app_user_sequence",
+            initialValue = 1, allocationSize = 20)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "app_user_sequence")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

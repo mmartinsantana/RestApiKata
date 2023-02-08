@@ -13,7 +13,10 @@ import javax.persistence.*;
 public class Authority {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "authority_sequence",
+            sequenceName = "authority_sequence",
+            initialValue = 1, allocationSize = 20)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "authority_sequence")
     private Long id;
 
     @Enumerated(EnumType.STRING)

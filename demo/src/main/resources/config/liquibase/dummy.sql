@@ -29,3 +29,10 @@ insert into operation values (nextval('HIBERNATE_SEQUENCE'), 2, 2,  current_time
 select * from person;
 select * from account;
 select * from operation;
+
+ALTER SEQUENCE account_sequence RESTART WITH 200;
+SELECT NEXT VALUE FOR account_sequence;
+SELECT CURRENT VALUE FOR account_sequence;
+INSERT INTO account (id, person_id) VALUES (NEXT VALUE FOR account_sequence, 1);
+
+select * from account

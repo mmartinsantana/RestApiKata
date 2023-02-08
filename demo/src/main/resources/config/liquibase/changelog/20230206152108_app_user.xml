@@ -13,7 +13,7 @@
         </not>
     </preConditions>
     <createTable tableName="app_user">
-        <column name="id" type="bigint" autoIncrement="true">
+        <column name="id" type="bigint" > <!--defaultValueSequenceNext="app_user_sequence">-->
             <constraints primaryKey="true"/>
         </column>
         <column name="user_name" type="varchar(250)"/>
@@ -22,21 +22,22 @@
             <constraints nullable="false" notNullConstraintName="app_user_person_id_nn" />
         </column>
     </createTable>
+    <createSequence sequenceName="app_user_sequence" incrementBy="20" startValue="1" />
     <addForeignKeyConstraint baseTableName="app_user" baseColumnNames="person_id" constraintName="app_user_person_id_fk" referencedTableName="person" referencedColumnNames="id" />
     </changeSet>
-    <changeSet id="20230206152108-2" author="Mario" context="faker" runAlways="false" runOnChange="true">
+    <changeSet id="20230206152108-2" author="Mario" context="test" runAlways="false" runOnChange="true">
         <loadData
-                file="config/liquibase/fake-data/app_user.csv"
+                file="config/liquibase/test-data/app_user.csv"
                 separator=";"
                 tableName="app_user"
                 usePreparedStatements="false">
         </loadData>
-
+        <sql dbms="h2">alter sequence app_user_sequence restart with (select max(id)+1 from app_user)</sql>
     </changeSet>
 
     <!-- https://stackoverflow.com/questions/50863009/does-liquibase-or-any-plug-ins-support-data-encryption-for-sql-insert-update-st -->
 <!--
-    <changeSet id="20230206152108-3" author="Mario" context="faker" runAlways="true" runOnChange="true">
+    <changeSet id="20230206152108-3" author="Mario" context="test" runAlways="true" runOnChange="true">
             <preConditions onFail="MARK_RAN">
                 <columnExists tableName="app_user" columnName="pass"/>
             </preConditions>

@@ -13,7 +13,7 @@
         </not>
     </preConditions>
     <createTable tableName="person">
-        <column name="id" type="bigint" autoIncrement="true">
+        <column name="id" type="bigint" > <!--defaultValueSequenceNext="person_sequence">-->
             <constraints primaryKey="true"/>
         </column>
         <column name="name" type="varchar(250)">
@@ -21,7 +21,7 @@
         </column>
     </createTable>
     <createTable tableName="account">
-        <column name="id" type="bigint"  autoIncrement="true">
+        <column name="id" type="bigint"  > <!--defaultValueSequenceNext="account_sequence">-->
             <constraints primaryKey="true" />
         </column>
         <column name="person_id" type="bigint">
@@ -29,7 +29,7 @@
         </column>
     </createTable>
     <createTable tableName="operation">
-        <column name="id" type="bigint"  autoIncrement="true">
+        <column name="id" type="bigint"  > <!--defaultValueSequenceNext="operation_sequence">-->
             <constraints primaryKey="true" />
         </column>
         <column name="type" type="varchar(64)">
@@ -44,7 +44,9 @@
     </createTable>
     <addForeignKeyConstraint baseTableName="account" baseColumnNames="person_id" constraintName="account_person_id_fk" referencedTableName="person" referencedColumnNames="id" />
     <addForeignKeyConstraint baseTableName="operation" baseColumnNames="account_id" constraintName="operation_account_id_fk" referencedTableName="account" referencedColumnNames="id" />
-    <createSequence sequenceName="hibernate_sequence" incrementBy="1" startValue="1" />
+    <createSequence sequenceName="account_sequence" incrementBy="20" startValue="1" />
+    <createSequence sequenceName="person_sequence" incrementBy="20" startValue="1" />
+    <createSequence sequenceName="operation_sequence" incrementBy="50" startValue="1" />
 </changeSet>
 
         </databaseChangeLog>

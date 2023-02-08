@@ -15,7 +15,10 @@ import java.util.List;
 public class Account {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "account_sequence",
+            sequenceName = "account_sequence",
+            initialValue = 1, allocationSize = 20)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_sequence")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

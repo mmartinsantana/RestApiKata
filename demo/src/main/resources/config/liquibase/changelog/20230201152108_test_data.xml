@@ -8,29 +8,32 @@
 
 
     <!--
-        Load sample data generated with Faker.js
+        Load sample data generated with test.js
         - This data can be easily edited using a CSV editor (or even MS Excel) and
           is located in the 'src/main/resources/config/liquibase/fake-data' directory
         - By default this data is applied when running with the JHipster 'dev' profile.
-          This can be customized by adding or removing 'faker' in the 'spring.liquibase.contexts'
+          This can be customized by adding or removing 'test' in the 'spring.liquibase.contexts'
           Spring Boot configuration key.
     -->
-    <changeSet id="20230201152108-1" author="Mario" context="faker" runAlways="false" runOnChange="true">
+    <changeSet id="20230201152108-1" author="Mario" context="test" runAlways="true" runOnChange="true">
         <!--<delete tableName="person" />-->
         <loadData
-                file="config/liquibase/fake-data/person.csv"
+                file="config/liquibase/test-data/person.csv"
                 separator=";"
                 tableName="person"
                 usePreparedStatements="false">
         </loadData>
+        <sql dbms="h2">alter sequence person_sequence restart with (select max(id)+1 from person)</sql>
     </changeSet>
 
-    <changeSet id="20230201152108-2" author="Mario" context="faker" runAlways="false" runOnChange="true">
+    <changeSet id="20230201152108-2" author="Mario" context="test" runAlways="false" runOnChange="true">
         <loadData
-                file="config/liquibase/fake-data/account.csv"
+                file="config/liquibase/test-data/account.csv"
                 separator=";"
                 tableName="account"
                 usePreparedStatements="false">
+
         </loadData>
+        <sql dbms="h2">alter sequence account_sequence restart with (select max(id)+1 from account)</sql>
     </changeSet>
 </databaseChangeLog>

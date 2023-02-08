@@ -14,7 +14,10 @@ import java.time.OffsetDateTime;
 public class Operation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "operation_sequence",
+            sequenceName = "operation_sequence",
+            initialValue = 1, allocationSize = 50)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "operation_sequence")
     private Long id;
 
     @NotNull
