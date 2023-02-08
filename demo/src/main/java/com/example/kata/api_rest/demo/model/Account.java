@@ -6,7 +6,9 @@ import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @JsonIdentityInfo(
@@ -25,6 +27,10 @@ public class Account {
     @NotNull
     //@JsonBackReference // JsonIgnore
     private Person person;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    //@JsonBackReference // JsonIgnore
+    private Set<Person> authorisedPersons =  new HashSet<>();
 
     @OneToMany(mappedBy = "account")
     @OrderBy(value = "dateTime")
@@ -78,6 +84,14 @@ public class Account {
         this.operations = operations;
     }
 
+    public Set<Person> getAuthorisedPersons() {
+        return authorisedPersons;
+    }
+
+    public void setAuthorisedPersons(Set<Person> authorisedPersons) {
+        this.authorisedPersons = authorisedPersons;
+    }
+
     public void addOperation(Operation operation) {
         OperationType type = operation.getType();
         double amount = operation.getAmount();
@@ -104,5 +118,10 @@ public class Account {
         } else {
             return operations.get(operations.size()-1).getBalance();
         }
+    }
+
+    public void addAuthorisedPerson(Person person) {
+        authorisedPersons.add(person);
+        person.addAuthorisedAccount(this);
     }
 }

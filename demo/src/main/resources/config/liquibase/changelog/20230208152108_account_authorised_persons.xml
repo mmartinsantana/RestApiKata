@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+<changeSet id="20230208152108-1" author="Mario"  runAlways="false" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+        <not>
+            <tableExists tableName="account_authorised_persons"/>
+        </not>
+    </preConditions>
+    <createTable tableName="account_authorised_persons">
+        <column name="authorised_accounts_id" type="bigint">
+            <constraints nullable="false"/>
+        </column>
+        <column name="authorised_persons_id" type="bigint">
+            <constraints nullable="false"/>
+        </column>
+    </createTable>
+    <addUniqueConstraint
+            columnNames="authorised_accounts_id, authorised_persons_id"
+            constraintName="account_person"
+            tableName="account_authorised_persons" />
+    <addForeignKeyConstraint baseTableName="account_authorised_persons" baseColumnNames="authorised_accounts_id" constraintName="account_authorised_persons_authorised_accounts_id_fk" referencedTableName="account" referencedColumnNames="id" />
+    <addForeignKeyConstraint baseTableName="account_authorised_persons" baseColumnNames="authorised_persons_id" constraintName="account_authorised_persons_authorised_persons_id_fk" referencedTableName="person" referencedColumnNames="id" />
+    </changeSet>
+
+</databaseChangeLog>

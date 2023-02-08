@@ -6,7 +6,9 @@ import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @JsonIdentityInfo(
@@ -27,6 +29,10 @@ public class Person {
     @OneToMany(mappedBy = "person")
     //@JsonManagedReference // @JsonIgnore
     private List<Account> accounts = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "authorisedPersons")
+    //@JsonManagedReference // @JsonIgnore
+    private Set<Account> authorisedAccounts = new HashSet<>();
 
     @OneToMany(mappedBy = "person")
     //@JsonManagedReference // @JsonIgnore
@@ -71,6 +77,22 @@ public class Person {
         accounts.add(account);
     }
 
+    public Set<Account> getAuthorisedAccounts() {
+        return authorisedAccounts;
+    }
+
+    public List<AppUser> getAppUsers() {
+        return appUsers;
+    }
+
+    public void setAppUsers(List<AppUser> appUsers) {
+        this.appUsers = appUsers;
+    }
+
+    public void setAuthorisedAccounts(Set<Account> authorisedAccounts) {
+        this.authorisedAccounts = authorisedAccounts;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -85,5 +107,9 @@ public class Person {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    public void addAuthorisedAccount(Account account) {
+        authorisedAccounts.add(account);
     }
 }

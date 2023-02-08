@@ -15,4 +15,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     //@Query("select distinct a from Account a left join fetch a.operations where a.person = :person")
     @EntityGraph(attributePaths = "operations")
     public List<Account> findByPerson(Person person);
+
+    @EntityGraph(attributePaths = "operations")
+    public List<Account> findByAuhtorisedPersons(Person person);
 }

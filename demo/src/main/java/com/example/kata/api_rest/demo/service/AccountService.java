@@ -10,6 +10,7 @@ import com.example.kata.api_rest.demo.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,11 +31,13 @@ public class AccountService {
     @Transactional(readOnly = true)
     public List<Account> getHistory(String userName) {
         Person person = personRepository.findByUserName(userName);
-        return accountRepository.findByPerson(person);
+        List<Account> result = new ArrayList<>(accountRepository.findByPerson(person));
+        result.addAll(accountRepository.findByAuhtorisedPersons(person));
+        return result;
     }
 
     @Transactional
-    public Optional<Operation> execute(OperationType type, long accountId, double amount) {
+    public Optional<Operation> execute(/*String userName, */OperationType type, long accountId, double amount) {
         Optional<Account> accountOpt = accountRepository.findById(accountId);
         if (!accountOpt.isPresent())
         {
@@ -43,9 +46,19 @@ public class AccountService {
 
         Account account = accountOpt.get();
 
+        /*if (!userIsAuthorised(account, userName))
+        {
+            return Optional.empty();
+        }*/
+
         Operation operation = new Operation(type, amount);
         account.addOperation(operation);
         operationRepository.save(operation);  // Should we do cascade on update from account.operations?
         accountRepository.save(account);
         return Optional.of(operation);
-    }}
+    }
+
+    private boolean userIsAuthorised(Account account, String userName) {
+        return true;
+    }
+}
