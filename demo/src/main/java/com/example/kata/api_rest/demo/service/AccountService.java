@@ -3,22 +3,34 @@ package com.example.kata.api_rest.demo.service;
 import com.example.kata.api_rest.demo.model.Account;
 import com.example.kata.api_rest.demo.model.Operation;
 import com.example.kata.api_rest.demo.model.OperationType;
+import com.example.kata.api_rest.demo.model.Person;
 import com.example.kata.api_rest.demo.repository.AccountRepository;
 import com.example.kata.api_rest.demo.repository.OperationRepository;
+import com.example.kata.api_rest.demo.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class AccountService {
 
+    private final PersonRepository personRepository;
+
     private final AccountRepository accountRepository;
     private final OperationRepository operationRepository;
 
-    public AccountService(AccountRepository accountRepository, OperationRepository operationRepository) {
+    public AccountService(PersonRepository personRepository, AccountRepository accountRepository, OperationRepository operationRepository) {
+        this.personRepository = personRepository;
         this.accountRepository = accountRepository;
         this.operationRepository = operationRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Account> getHistory(String userName) {
+        Person person = personRepository.findByUserName(userName);
+        return accountRepository.findByPerson(person);
     }
 
     @Transactional

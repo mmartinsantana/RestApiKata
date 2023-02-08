@@ -8,6 +8,7 @@ import com.example.kata.api_rest.demo.service.AccountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +23,8 @@ public class AccountController {
     public static final String SUB_PATH_WITHDRAW = "/withdrawal";
 
     public static final String SUB_PATH_DEPOSIT = "/deposit";
+
+    public static final String SUB_PATH_HISTORY = "/history";
 
     private final AccountService accountService;
 
@@ -48,6 +51,12 @@ public class AccountController {
             return ResponseEntity.notFound().build();
         }
     }*/
+
+    @GetMapping(value = SUB_PATH_HISTORY)
+    public ResponseEntity<List<Account>> getOperations(Principal principal) {
+        String name = principal.getName();
+        return ResponseEntity.ok().body(accountService.getHistory(name));
+    }
 
     @PostMapping(value = SUB_PATH_WITHDRAW)
     public ResponseEntity<Operation> withdraw(@RequestParam long accountId, @RequestParam double amount) {

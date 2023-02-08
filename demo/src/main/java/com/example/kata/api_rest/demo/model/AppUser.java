@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @JsonIdentityInfo(
@@ -24,7 +24,7 @@ public class AppUser {
     private Person person;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    List<Authority> authorities;
+    Set<Authority> authorities;
 
     private String userName;
 
@@ -69,6 +69,14 @@ public class AppUser {
 
     public void setPass(String pass) {
         this.pass = pass;
+    }
+
+    public Set<Authority> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
     }
 
     @Override

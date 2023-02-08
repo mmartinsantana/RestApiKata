@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @JsonIdentityInfo(
@@ -23,11 +23,11 @@ public class Person {
 
     @OneToMany(mappedBy = "person")
     //@JsonManagedReference // @JsonIgnore
-    private Set<Account> accounts = new HashSet<>();
+    private List<Account> accounts = new ArrayList<>();
 
     @OneToMany(mappedBy = "person")
     //@JsonManagedReference // @JsonIgnore
-    private Set<AppUser> appUsers = new HashSet<>();
+    private List<AppUser> appUsers = new ArrayList<>();
 
     Person() {}
 
@@ -51,11 +51,11 @@ public class Person {
         this.name = name;
     }
 
-    public Set<Account> getAccounts() {
+    public List<Account> getAccounts() {
         return accounts;
     }
 
-    public void setAccounts(Set<Account> accounts) {
+    public void setAccounts(List<Account> accounts) {
         this.accounts = accounts;
     }
 

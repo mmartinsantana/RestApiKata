@@ -22,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -29,13 +30,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.sql.DataSource;
 import java.io.UnsupportedEncodingException;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -65,6 +66,9 @@ public class AccountControllerIntegrationTest {
     @Autowired
     private WebApplicationContext context;
 
+    @MockBean
+    private DataSource dataSource;
+
     private Person person;
 
     private Account account;
@@ -85,6 +89,7 @@ public class AccountControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "REST")
     public void withdrawUsingPostWithParameters() throws Exception {
         // given
         double withdrawnAmount = 2;
@@ -102,8 +107,8 @@ public class AccountControllerIntegrationTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .queryParam("accountId", String.valueOf(ACCOUNT_ID))
                 .queryParam("amount", String.valueOf(withdrawnAmount))
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(httpBasic("rest", "restPass"));
+                .contentType(MediaType.APPLICATION_JSON);
+                //.with(httpBasic("rest", "restPass"));
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
@@ -120,6 +125,7 @@ public class AccountControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "REST")
     public void withdrawUsingPostWithBody() throws Exception {
         // given
         double withdrawnAmount = 2;
@@ -138,8 +144,8 @@ public class AccountControllerIntegrationTest {
                 .post(AccountController.PATH + "/operation")
                 .accept(MediaType.APPLICATION_JSON)
                 .content(asJsonString(operation))
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(httpBasic("rest", "restPass"));
+                .contentType(MediaType.APPLICATION_JSON);
+                //.with(httpBasic("rest", "restPass"));
 
         MvcResult result = mockMvc
                 .perform(requestBuilder)
@@ -182,6 +188,7 @@ public class AccountControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "REST")
     public void testDeposit() throws Exception {
         // given
         double savedAmount = 3;
@@ -198,8 +205,8 @@ public class AccountControllerIntegrationTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .queryParam("accountId", String.valueOf(ACCOUNT_ID))
                 .queryParam("amount", String.valueOf(savedAmount))
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(httpBasic("rest", "restPass"));
+                .contentType(MediaType.APPLICATION_JSON);
+                //.with(httpBasic("rest", "restPass"));
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
@@ -212,6 +219,35 @@ public class AccountControllerIntegrationTest {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(json.write(operation).toString())
                 .contains(response.getContentAsString());
+    }
+
+    @Test
+    @WithMockUser(roles = "NO_AUTH")
+    public void testDepositNoAuth() throws Exception {
+        // given
+        double savedAmount = 3;
+
+        given(accountRepository.findById(ACCOUNT_ID))
+                .willReturn(Optional.of(account));
+
+        Operation operation = new Operation(OperationType.DEPOSIT, savedAmount);
+        operation.setAccount(account);
+        operation.setBalance(savedAmount);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post(AccountController.PATH + AccountController.SUB_PATH_DEPOSIT)
+                .accept(MediaType.APPLICATION_JSON)
+                .queryParam("accountId", String.valueOf(ACCOUNT_ID))
+                .queryParam("amount", String.valueOf(savedAmount))
+                .contentType(MediaType.APPLICATION_JSON);
+        //.with(httpBasic("rest", "restPass"));
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        MockHttpServletResponse response = result.getResponse();
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
     }
 
 }

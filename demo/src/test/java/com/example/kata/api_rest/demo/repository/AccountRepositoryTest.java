@@ -11,7 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,7 +54,7 @@ public class AccountRepositoryTest {
     @Test
     public void whenFindByPerson() {
         // when
-        Set<Account> foundAccounts = accountRepository.findByPerson(alex);
+        List<Account> foundAccounts = accountRepository.findByPerson(alex);
 
         // then
         assertThat(foundAccounts).hasSize(1);
