@@ -1,9 +1,7 @@
 package com.example.kata.api_rest.demo.controller;
 
 import com.example.kata.api_rest.demo.model.*;
-import com.example.kata.api_rest.demo.repository.AccountRepository;
-import com.example.kata.api_rest.demo.repository.OperationRepository;
-import com.example.kata.api_rest.demo.repository.PersonRepository;
+import com.example.kata.api_rest.demo.service.AccountService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +9,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -29,13 +28,16 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.sql.DataSource;
 import java.io.UnsupportedEncodingException;
+import java.security.Principal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.kata.api_rest.demo.service.AccountServiceTest.PASS;
 import static com.example.kata.api_rest.demo.service.AccountServiceTest.USER_NAME;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -46,13 +48,10 @@ public class AccountControllerTest {
     private final static long ACCOUNT_ID = 2;
 
     @MockBean
-    private AccountRepository accountRepository;
+    private AccountService accountService;
 
     @MockBean
-    private OperationRepository operationRepository;
-
-    @MockBean
-    private PersonRepository personRepository;
+    private PersonController personController;
 
     private MockMvc mockMvc;
 
@@ -98,12 +97,15 @@ public class AccountControllerTest {
         // given
         double withdrawnAmount = 2;
 
-        given(accountRepository.findById(ACCOUNT_ID))
-                .willReturn(Optional.of(account));
+        Principal mockPrincipal = Mockito.mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn("USER_NAME");
 
         Operation operation = new Operation(OperationType.WITHDRAWAL, withdrawnAmount);
         operation.setAccount(account);
         operation.setBalance(-withdrawnAmount);
+
+        when(accountService.execute(USER_NAME, OperationType.WITHDRAWAL, account.getId(), withdrawnAmount))
+                .thenReturn(Optional.of(operation));
 
         System.out.println("HEY " + json.write(operation).toString());
 
@@ -115,6 +117,41 @@ public class AccountControllerTest {
                 .contentType(MediaType.APPLICATION_JSON);
                 //.with(httpBasic("rest", "restPass"));
 
+        performAndAssert(requestBuilder, operation);
+    }
+
+    @Test
+    @WithMockUser(roles = "REST", username = "a")
+    public void withdrawBeinAuthorised() throws Exception {
+        // given
+        Person authorisedPerson = new Person("a");
+        AppUser authorisedUser=new AppUser(authorisedPerson, "a",  "a");
+        authorisedPerson.setAppUser(authorisedUser);
+        account.addAuthorisedPerson(authorisedPerson);
+
+        double withdrawnAmount = 2;
+
+        Operation operation = new Operation(OperationType.WITHDRAWAL, withdrawnAmount);
+        operation.setAccount(account);
+        operation.setBalance(-withdrawnAmount);
+
+        when(accountService.execute(authorisedUser.getUserName(), OperationType.WITHDRAWAL, account.getId(), withdrawnAmount))
+                .thenReturn(Optional.of(operation));
+
+        System.out.println("HEY " + json.write(operation).toString());
+
+        // when
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post(AccountController.PATH + AccountController.SUB_PATH_OPERATION)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(asJsonString(operation))
+                .contentType(MediaType.APPLICATION_JSON);
+        //.with(httpBasic("rest", "restPass"));
+
+        performAndAssert(requestBuilder, operation);
+    }
+
+    private void performAndAssert(RequestBuilder requestBuilder, Operation operation) throws Exception {
         MvcResult result = mockMvc
                 .perform(requestBuilder)
                 .andExpect(jsonPath("$.account.id").value(operation.getAccount().getId()))
@@ -161,12 +198,12 @@ public class AccountControllerTest {
         // given
         double savedAmount = 3;
 
-        given(accountRepository.findById(ACCOUNT_ID))
-                .willReturn(Optional.of(account));
-
         Operation operation = new Operation(OperationType.DEPOSIT, savedAmount);
         operation.setAccount(account);
         operation.setBalance(savedAmount);
+
+        when(accountService.execute(USER_NAME, OperationType.DEPOSIT, account.getId(), savedAmount))
+                .thenReturn(Optional.of(operation));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(AccountController.PATH + AccountController.SUB_PATH_OPERATION)
@@ -194,12 +231,12 @@ public class AccountControllerTest {
         // given
         double savedAmount = 3;
 
-        given(accountRepository.findById(ACCOUNT_ID))
-                .willReturn(Optional.of(account));
-
         Operation operation = new Operation(OperationType.DEPOSIT, savedAmount);
         operation.setAccount(account);
         operation.setBalance(savedAmount);
+
+        when(accountService.execute("wrong", OperationType.DEPOSIT, account.getId(), savedAmount))
+                .thenReturn(Optional.empty());
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(AccountController.PATH + AccountController.SUB_PATH_OPERATION)
@@ -222,12 +259,12 @@ public class AccountControllerTest {
         // given
         double withdrawnAmount = 2;
 
-        given(accountRepository.findById(ACCOUNT_ID))
-                .willReturn(Optional.of(account));
-
         Operation operation = new Operation(OperationType.WITHDRAWAL, withdrawnAmount);
         operation.setAccount(account);
         operation.setBalance(-withdrawnAmount);
+
+        when(accountService.execute("other", OperationType.WITHDRAWAL, account.getId(), withdrawnAmount))
+                .thenReturn(Optional.empty());
 
         System.out.println("HEY " + json.write(operation).toString());
 
@@ -246,6 +283,30 @@ public class AccountControllerTest {
         MockHttpServletResponse response = result.getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
+
+    @Test
+    @WithMockUser(roles = "REST", username = USER_NAME)
+    public void testHistory() throws Exception {
+        // given
+
+        List<Account> accounts = new ArrayList<Account>(appUser.getPerson().getAccounts());
+        accounts.addAll(appUser.getPerson().getAuthorisedAccounts());
+
+        when(accountService.getHistory(USER_NAME))
+                .thenReturn(accounts);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get(AccountController.PATH + AccountController.SUB_PATH_HISTORY)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+        //.with(httpBasic("rest", "restPass"));
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        MockHttpServletResponse response = result.getResponse();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
 }
