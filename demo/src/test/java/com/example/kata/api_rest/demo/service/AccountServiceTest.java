@@ -24,6 +24,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AccountServiceTest {
+
+    public static final String USER_NAME = "U";
+    public static final String PASS = "p";
+
     @InjectMocks
     private AccountService accountService;
 
@@ -40,12 +44,17 @@ public class AccountServiceTest {
 
     private Person person;
 
+    private AppUser appUser;
+
     private Account account;
 
     @BeforeEach
     private void setUp() {
         person = new Person("Test");
         person.setId(1L);
+
+        appUser = new AppUser(person, USER_NAME, PASS);
+        person.setAppUser(appUser);
 
         account = new Account();
         account.setId(ACCOUNT_ID);
@@ -63,7 +72,7 @@ public class AccountServiceTest {
         when(accountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(account));
 
         // then
-        Optional<Operation> operationOpt = accountService.execute(OperationType.WITHDRAWAL, ACCOUNT_ID, withdrawnAmount);
+        Optional<Operation> operationOpt = accountService.execute(person.getAppUser().getUserName(), OperationType.WITHDRAWAL, ACCOUNT_ID, withdrawnAmount);
 
         assertTrue(operationOpt.isPresent());
         Operation operation = operationOpt.get();
@@ -80,21 +89,15 @@ public class AccountServiceTest {
         // given
         double withdrawnAmount = 2;
 
-        String userName = "test_user";
-
-        AppUser user = new AppUser();
-        user.setUserName(userName);
-        user.setPerson(person);
-
         OffsetDateTime before = OffsetDateTime.now();
 
         // when
-        when(personRepository.findByUserName(userName)).thenReturn(person);
+        when(personRepository.findByUserName(USER_NAME)).thenReturn(person);
         when(accountRepository.findByPerson(person)).thenReturn(List.of(account));
-        when(accountRepository.findByAuhtorisedPersons(person)).thenReturn(Lists.emptyList());
+        when(accountRepository.findByAuthorisedPersons(person)).thenReturn(Lists.emptyList());
 
         // then
-        List<Account> accounts = accountService.getHistory(userName);
+        List<Account> accounts = accountService.getHistory(USER_NAME);
 
         assertEquals(accounts.size(), 1);
         assertEquals(accounts.get(0), account);
@@ -105,24 +108,18 @@ public class AccountServiceTest {
         // given
         double withdrawnAmount = 2;
 
-        String userName = "test_user";
-
-        AppUser user = new AppUser();
-        user.setUserName(userName);
-        user.setPerson(person);
-
         Account account_auth = new Account();
         account_auth.addAuthorisedPerson(person);
 
         OffsetDateTime before = OffsetDateTime.now();
 
         // when
-        when(personRepository.findByUserName(userName)).thenReturn(person);
+        when(personRepository.findByUserName(USER_NAME)).thenReturn(person);
         when(accountRepository.findByPerson(person)).thenReturn(List.of(account));
-        when(accountRepository.findByAuhtorisedPersons(person)).thenReturn(List.of(account_auth));
+        when(accountRepository.findByAuthorisedPersons(person)).thenReturn(List.of(account_auth));
 
         // then
-        List<Account> accounts = accountService.getHistory(userName);
+        List<Account> accounts = accountService.getHistory(USER_NAME);
 
         assertThat(accounts, containsInAnyOrder(account, account_auth));
     }

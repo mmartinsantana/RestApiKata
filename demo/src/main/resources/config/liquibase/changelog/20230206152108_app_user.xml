@@ -16,14 +16,13 @@
         <column name="id" type="bigint" > <!--defaultValueSequenceNext="app_user_sequence">-->
             <constraints primaryKey="true"/>
         </column>
-        <column name="user_name" type="varchar(250)"/>
-        <column name="pass" type="varchar(250)"/>
-        <column name="person_id" type="bigint">
-            <constraints nullable="false" notNullConstraintName="app_user_person_id_nn" />
+        <column name="user_name" type="varchar(250)">
+            <constraints nullable="false" unique="true" uniqueConstraintName="user_name_unique"/>
         </column>
+        <column name="pass" type="varchar(250)"/>
     </createTable>
-    <createSequence sequenceName="app_user_sequence" incrementBy="20" startValue="1" />
-    <addForeignKeyConstraint baseTableName="app_user" baseColumnNames="person_id" constraintName="app_user_person_id_fk" referencedTableName="person" referencedColumnNames="id" />
+
+
     </changeSet>
     <changeSet id="20230206152108-2" author="Mario" context="test" runAlways="false" runOnChange="true">
         <loadData
@@ -32,7 +31,6 @@
                 tableName="app_user"
                 usePreparedStatements="false">
         </loadData>
-        <sql dbms="h2">alter sequence app_user_sequence restart with (select max(id)+1 from app_user)</sql>
     </changeSet>
 
     <!-- https://stackoverflow.com/questions/50863009/does-liquibase-or-any-plug-ins-support-data-encryption-for-sql-insert-update-st -->

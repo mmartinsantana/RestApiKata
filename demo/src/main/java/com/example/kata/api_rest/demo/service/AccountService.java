@@ -32,12 +32,12 @@ public class AccountService {
     public List<Account> getHistory(String userName) {
         Person person = personRepository.findByUserName(userName);
         List<Account> result = new ArrayList<>(accountRepository.findByPerson(person));
-        result.addAll(accountRepository.findByAuhtorisedPersons(person));
+        result.addAll(accountRepository.findByAuthorisedPersons(person));
         return result;
     }
 
     @Transactional
-    public Optional<Operation> execute(/*String userName, */OperationType type, long accountId, double amount) {
+    public Optional<Operation> execute(String userName, OperationType type, long accountId, double amount) {
         Optional<Account> accountOpt = accountRepository.findById(accountId);
         if (!accountOpt.isPresent())
         {
@@ -46,10 +46,10 @@ public class AccountService {
 
         Account account = accountOpt.get();
 
-        /*if (!userIsAuthorised(account, userName))
+        if (!userIsAuthorised(account, userName))
         {
             return Optional.empty();
-        }*/
+        }
 
         Operation operation = new Operation(type, amount);
         account.addOperation(operation);
@@ -59,6 +59,6 @@ public class AccountService {
     }
 
     private boolean userIsAuthorised(Account account, String userName) {
-        return true;
+        return account.getPerson().hasUserName(userName) || account.getAuthorisedPersons().stream().anyMatch(p -> p.hasUserName(userName));
     }
 }

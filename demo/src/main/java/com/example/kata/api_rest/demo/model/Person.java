@@ -34,9 +34,9 @@ public class Person {
     //@JsonManagedReference // @JsonIgnore
     private Set<Account> authorisedAccounts = new HashSet<>();
 
-    @OneToMany(mappedBy = "person")
+    @OneToOne(mappedBy = "person")
     //@JsonManagedReference // @JsonIgnore
-    private List<AppUser> appUsers = new ArrayList<>();
+    private AppUser appUser;
 
     Person() {}
 
@@ -68,6 +68,14 @@ public class Person {
         this.accounts = accounts;
     }
 
+    public AppUser getAppUser() {
+        return appUser;
+    }
+
+    public void setAppUser(AppUser appUser) {
+        this.appUser = appUser;
+    }
+
     public void addAccount(Account account) {
         addInternalAccount(account);
         account.setPerson(this);
@@ -79,14 +87,6 @@ public class Person {
 
     public Set<Account> getAuthorisedAccounts() {
         return authorisedAccounts;
-    }
-
-    public List<AppUser> getAppUsers() {
-        return appUsers;
-    }
-
-    public void setAppUsers(List<AppUser> appUsers) {
-        this.appUsers = appUsers;
     }
 
     public void setAuthorisedAccounts(Set<Account> authorisedAccounts) {
@@ -111,5 +111,9 @@ public class Person {
 
     public void addAuthorisedAccount(Account account) {
         authorisedAccounts.add(account);
+    }
+
+    public boolean hasUserName(String userName) {
+        return appUser.getUserName().equals(userName);
     }
 }

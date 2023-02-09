@@ -17,5 +17,5 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     public List<Account> findByPerson(Person person);
 
     @EntityGraph(attributePaths = "operations")
-    public List<Account> findByAuhtorisedPersons(Person person);
+    public List<Account> findByAuthorisedPersons(Person person);
 }

@@ -3,7 +3,6 @@ package com.example.kata.api_rest.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -15,14 +14,11 @@ import java.util.Set;
 public class AppUser {
 
     @Id
-    @SequenceGenerator(name = "app_user_sequence",
-            sequenceName = "app_user_sequence",
-            initialValue = 1, allocationSize = 20)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "app_user_sequence")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "id")
     //@JsonBackReference // JsonIgnore
     private Person person;
 
@@ -33,7 +29,7 @@ public class AppUser {
 
     private String pass;
 
-    public AppUser() {
+    AppUser() {
     }
 
     public AppUser(Person person, String userName, String pass) {

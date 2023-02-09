@@ -20,11 +20,9 @@ public class AccountController {
 
     public static final String PATH="/api/account";
 
-    public static final String SUB_PATH_WITHDRAW = "/withdrawal";
-
-    public static final String SUB_PATH_DEPOSIT = "/deposit";
-
     public static final String SUB_PATH_HISTORY = "/history";
+
+    public static final String SUB_PATH_OPERATION = "/operation";
 
     private final AccountService accountService;
 
@@ -58,25 +56,13 @@ public class AccountController {
         return ResponseEntity.ok().body(accountService.getHistory(name));
     }
 
-    @PostMapping(value = SUB_PATH_WITHDRAW)
-    public ResponseEntity<Operation> withdraw(@RequestParam long accountId, @RequestParam double amount) {
-        Optional<Operation> operation = accountService.execute(OperationType.WITHDRAWAL, accountId, amount);
+    @PostMapping(value = SUB_PATH_OPERATION)
+    public ResponseEntity<Operation> operate(Principal principal, @RequestBody Operation operationIn) {
+        String name = principal.getName();
 
-        return operation.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping(value = SUB_PATH_DEPOSIT)
-    public ResponseEntity<Operation> deposit(@RequestParam long accountId, @RequestParam double amount) {
-        Optional<Operation> operation = accountService.execute(OperationType.DEPOSIT, accountId, amount);
-
-        return operation.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping(value = "/operation")
-    public ResponseEntity<Operation> operate(@RequestBody Operation operationIn) {
         OperationType operationType = operationIn.getType();
 
-        Optional<Operation> operationOut = accountService.execute(operationType, operationIn.getAccount().getId(), operationIn.getAmount());
+        Optional<Operation> operationOut = accountService.execute(name, operationType, operationIn.getAccount().getId(), operationIn.getAmount());
 
         return operationOut.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
