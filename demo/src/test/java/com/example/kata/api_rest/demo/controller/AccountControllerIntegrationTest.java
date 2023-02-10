@@ -22,8 +22,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.sql.DataSource;
 import java.io.UnsupportedEncodingException;
@@ -36,7 +34,6 @@ import static com.example.kata.api_rest.demo.service.AccountServiceTest.PASS;
 import static com.example.kata.api_rest.demo.service.AccountServiceTest.USER_NAME;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @AutoConfigureJsonTesters
@@ -51,6 +48,7 @@ public class AccountControllerIntegrationTest {
     @MockBean
     private PersonController personController;
 
+    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
@@ -58,9 +56,6 @@ public class AccountControllerIntegrationTest {
 
     @Autowired
     private JacksonTester<Operation> json;
-
-    @Autowired
-    private WebApplicationContext context;
 
     @MockBean
     private DataSource dataSource;
@@ -73,11 +68,6 @@ public class AccountControllerIntegrationTest {
 
     @BeforeEach
     public void setup() {
-        mockMvc = MockMvcBuilders
-                .webAppContextSetup(context)
-                .apply(springSecurity())
-                .build();
-
         person = new Person("Test");
         person.setId(1L);
 

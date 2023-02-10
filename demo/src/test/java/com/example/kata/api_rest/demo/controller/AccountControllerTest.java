@@ -68,6 +68,8 @@ public class AccountControllerTest {
                 .addModule(new JavaTimeModule())
                 .build();
 
+        JacksonTester.initFields(this, mapper);
+
         // MockMvc standalone approach
         mvc = MockMvcBuilders.standaloneSetup(accountController)
                 //.setControllerAdvice(new SuperHeroExceptionHandler())
