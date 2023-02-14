@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan("com.example.kata.api_rest.demo.service, " +
 		"com.example.kata.api_rest.demo.repository, " +
-		"com.example.kata.api_rest.demo.controller, " +
-		"com.example.kata.api_rest.demo.security")
+		"com.example.kata.api_rest.demo.controller "
+		/*,"com.example.kata.api_rest.demo.security"*/ )
 public class ApiRestKataApplication {
 
 	@Bean

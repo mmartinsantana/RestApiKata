@@ -17,7 +17,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -80,7 +79,7 @@ public class AccountControllerIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "REST", username = USER_NAME)
+    //@WithMockUser(roles = "REST", username = USER_NAME)
     public void withdraw() throws Exception {
         // given
         double withdrawnAmount = 2;
@@ -106,7 +105,7 @@ public class AccountControllerIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "REST", username = "a")
+    //@WithMockUser(roles = "REST", username = "a")
     public void withdrawBeinAuthorised() throws Exception {
         // given
         Person authorisedPerson = new Person("a");
@@ -178,7 +177,7 @@ public class AccountControllerIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "REST", username = USER_NAME)
+    //@WithMockUser(roles = "REST", username = USER_NAME)
     public void testDeposit() throws Exception {
         // given
         double savedAmount = 3;
@@ -211,7 +210,7 @@ public class AccountControllerIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "NO_AUTH", username = "wrong")
+    //@WithMockUser(roles = "NO_AUTH", username = "wrong")
     public void testDepositNoAuth() throws Exception {
         // given
         double savedAmount = 3;
@@ -239,7 +238,7 @@ public class AccountControllerIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "REST", username = "other")
+    //@WithMockUser(roles = "REST", username = "other")
     public void testWithdrawWrongAccount() throws Exception {
         // given
         double withdrawnAmount = 2;
@@ -271,7 +270,7 @@ public class AccountControllerIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "REST", username = USER_NAME)
+    //@WithMockUser(roles = "REST", username = USER_NAME)
     public void testHistory() throws Exception {
         // given
 

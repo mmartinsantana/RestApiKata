@@ -16,8 +16,6 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -74,7 +72,7 @@ public class AccountControllerTest {
         mvc = MockMvcBuilders.standaloneSetup(accountController)
                 //.setControllerAdvice(new SuperHeroExceptionHandler())
                 //.addFilters(new SuperHeroFilter())
-                .setCustomArgumentResolvers(new AuthenticationPrincipalArgumentResolver())
+               //.setCustomArgumentResolvers(new AuthenticationPrincipalArgumentResolver())
                 .build();
 
         person = new Person("Test");
@@ -150,7 +148,7 @@ public class AccountControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "REST", username = USER_NAME)
+    //@WithMockUser(roles = "REST", username = USER_NAME)
     public void testDeposit() throws Exception {
         // given
         double savedAmount = 3;
