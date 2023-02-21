@@ -1,12 +1,10 @@
 package com.example.kata.api_rest.demo.controller;
 
+import com.example.kata.api_rest.demo.TestUtil;
+import com.example.kata.api_rest.demo.message.Sender;
 import com.example.kata.api_rest.demo.model.*;
 import com.example.kata.api_rest.demo.service.AccountService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +22,6 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.sql.DataSource;
-import java.io.UnsupportedEncodingException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureJsonTesters
 @WebMvcTest(AccountController.class)
+@MockBean(Sender.class)
 public class AccountControllerIntegrationTest {
 
     private final static long ACCOUNT_ID = 2;
@@ -98,7 +96,7 @@ public class AccountControllerIntegrationTest {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(AccountController.PATH + AccountController.SUB_PATH_OPERATION)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(asJsonString(operation))
+                .content(TestUtil.asJsonString(operation))
                 .contentType(MediaType.APPLICATION_JSON);
         //.with(httpBasic("rest", "restPass"));
 
@@ -129,53 +127,16 @@ public class AccountControllerIntegrationTest {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(AccountController.PATH + AccountController.SUB_PATH_OPERATION)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(asJsonString(operation))
+                .content(TestUtil.asJsonString(operation))
                 .contentType(MediaType.APPLICATION_JSON);
         //.with(httpBasic("rest", "restPass"));
 
         performAndAssert(requestBuilder, operation);
     }
 
-    private void performAndAssert(RequestBuilder requestBuilder, Operation operation) throws Exception {
-        MvcResult result = mockMvc
-                .perform(requestBuilder)
-                .andExpect(jsonPath("$.account.id").value(operation.getAccount().getId()))
-                .andExpect(jsonPath("$.amount").value(operation.getAmount()))
-                .andExpect(jsonPath("$.balance").value(operation.getBalance()))
-                .andExpect(jsonPath("$.type").value(operation.getType().name()))
-                .andReturn();
 
-        MockHttpServletResponse response = result.getResponse();
 
-        // then
-        OffsetDateTime dateTime = getOffsetDateTime(response);
-        operation.setDateTime(dateTime);
 
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-        // Duplicated with andExpect above ;)
-        assertThat(json.write(operation).toString())
-                .contains(response.getContentAsString());
-    }
-
-    public static String asJsonString(final Object obj) {
-        try {
-
-            ObjectMapper objectMapper = JsonMapper.builder()
-                    .addModule(new JavaTimeModule())
-                    .build();
-
-            return objectMapper.writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static OffsetDateTime getOffsetDateTime(MockHttpServletResponse response) throws JsonProcessingException, UnsupportedEncodingException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(response.getContentAsString());
-        String dateTime = jsonNode.get("dateTime").asText();
-        return OffsetDateTime.parse(dateTime);
-    }
 
     @Test
     @WithMockUser(roles = "REST", username = USER_NAME)
@@ -193,7 +154,7 @@ public class AccountControllerIntegrationTest {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(AccountController.PATH + AccountController.SUB_PATH_OPERATION)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(asJsonString(operation))
+                .content(TestUtil.asJsonString(operation))
                 .contentType(MediaType.APPLICATION_JSON);
         //.with(httpBasic("rest", "restPass"));
 
@@ -202,7 +163,7 @@ public class AccountControllerIntegrationTest {
         MockHttpServletResponse response = result.getResponse();
 
         // then
-        OffsetDateTime dateTime = getOffsetDateTime(response);
+        OffsetDateTime dateTime = TestUtil.getOffsetDateTime(response);
         operation.setDateTime(dateTime);
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
@@ -226,7 +187,7 @@ public class AccountControllerIntegrationTest {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(AccountController.PATH + AccountController.SUB_PATH_OPERATION)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(asJsonString(operation))
+                .content(TestUtil.asJsonString(operation))
                 .contentType(MediaType.APPLICATION_JSON);
         //.with(httpBasic("rest", "restPass"));
 
@@ -257,7 +218,7 @@ public class AccountControllerIntegrationTest {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(AccountController.PATH + AccountController.SUB_PATH_OPERATION)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(asJsonString(operation))
+                .content(TestUtil.asJsonString(operation))
                 .contentType(MediaType.APPLICATION_JSON);
         //.with(httpBasic("rest", "restPass"));
 
@@ -292,6 +253,27 @@ public class AccountControllerIntegrationTest {
         MockHttpServletResponse response = result.getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    private void performAndAssert(RequestBuilder requestBuilder, Operation operation) throws Exception {
+        MvcResult result = mockMvc
+                .perform(requestBuilder)
+                .andExpect(jsonPath("$.account.id").value(operation.getAccount().getId()))
+                .andExpect(jsonPath("$.amount").value(operation.getAmount()))
+                .andExpect(jsonPath("$.balance").value(operation.getBalance()))
+                .andExpect(jsonPath("$.type").value(operation.getType().name()))
+                .andReturn();
+
+        MockHttpServletResponse response = result.getResponse();
+
+        // then
+        OffsetDateTime dateTime = TestUtil.getOffsetDateTime(response);
+        operation.setDateTime(dateTime);
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        // Duplicated with andExpect above ;)
+        assertThat(response.getContentAsString())
+                .contains(json.write(operation).toString());
     }
 
 }

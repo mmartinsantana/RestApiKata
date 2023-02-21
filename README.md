@@ -3,7 +3,7 @@ REST API Kata - https://docs.google.com/document/d/1Gyb9M_Ju_KhLeDeb3d4IFEnZUlba
 
 
 
-# REST API
+# Demo
 ## GET
 It will pop up a login page from the browser, then you can enter the address again :/
 ### Show all users
@@ -93,6 +93,13 @@ mvn package -Pprod
 docker-compose up --build
 docker-compose down 
 ```
-# TODO
-1. Run tests with h2 !! Test by running app first ;)
-2. versioning https://stackoverflow.com/questions/20198275/how-to-manage-rest-api-versioning-with-spring
+## Send message to JMS_DEMO
+
+POST to http://localhost:8080/api/msg/send
+
+
+# JMS_DEMO
+
+Inspired on https://spring.io/guides/gs/messaging-rabbitmq
+
+Listens to "spring-boot-exchange" topic "foo.bar.baz"

@@ -9,10 +9,13 @@ import org.springframework.context.annotation.Configuration;
 
 @SpringBootApplication
 @Configuration
-@ComponentScan("com.example.kata.api_rest.demo.service, " +
-		"com.example.kata.api_rest.demo.repository, " +
-		"com.example.kata.api_rest.demo.controller, " +
-		"com.example.kata.api_rest.demo.security")
+@ComponentScan("""
+	com.example.kata.api_rest.demo.service, 
+	com.example.kata.api_rest.demo.repository, 
+	com.example.kata.api_rest.demo.controller, 
+	com.example.kata.api_rest.demo.security, 
+	com.example.kata.api_rest.demo.message
+	""")
 public class ApiRestKataApplication {
 
 	@Bean

@@ -1,25 +1,24 @@
 package com.example.kata.api_rest.demo.repository;
 
+import com.example.kata.api_rest.demo.message.Sender;
 import com.example.kata.api_rest.demo.model.Account;
 import com.example.kata.api_rest.demo.model.Operation;
 import com.example.kata.api_rest.demo.model.OperationType;
 import com.example.kata.api_rest.demo.model.Person;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(SpringExtension.class)
+
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@MockBean(Sender.class)
 public class OperationRepositoryTest {
 
     @Autowired
