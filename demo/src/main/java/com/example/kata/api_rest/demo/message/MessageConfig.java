@@ -6,6 +6,9 @@ import org.springframework.context.annotation.Configuration;
 public class MessageConfig {
     static final String TOPIC_NAME = "general_topic_name";
 
+    static final String EPHEMERAL_EXCHANGE_NAME = "ephemeral_exchange";
+    static final String DEAD_LETTER_QUEUE_NAME = "dead_letter_queue_name";
+
     static final String QUEUE_NAME = "general_queue_name";
 /*
     @Bean

@@ -15,4 +15,22 @@ public class Sender {
         rabbitTemplate.convertAndSend(MessageConfig.TOPIC_NAME, "foo.bar.baz", message);
 
     }
+
+    public void sendEphemeral(String message) throws Exception {
+        rabbitTemplate.convertAndSend(MessageConfig.EPHEMERAL_EXCHANGE_NAME, "test_dead", message);
+
+    }
+
+    public String recover() throws Exception {
+        Object msg = rabbitTemplate.receiveAndConvert(MessageConfig.DEAD_LETTER_QUEUE_NAME);
+
+        if (msg != null) {
+            System.out.println("Recovered!: ");
+            return msg.toString();
+        } else {
+            System.out.println("Could not recover: ");
+        }
+
+        return null;
+    }
 }

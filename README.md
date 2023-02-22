@@ -113,7 +113,7 @@ Listens to "spring-boot-exchange" topic "foo.bar.baz"
 ### RabitMQ
 Just run ;)
 ### jms_demo
-'mvn package'
+'mvn package -DskipTests'
 'docker-compose build'
 'docker-compose up'
 
@@ -122,13 +122,31 @@ Just run ;)
 2. Launch RabitMQ: docker run -it --rm --name rabbitmq --network custom_network -p 5672:5672 -p 15672:15672 rabbitmq:3.11-management
 3. Launch jms_demo
 
-## Test
+## Test - send & receive
 
 Post
-## url: http://localhost:8080/api/msg/send
-## basic auth:
-### user: pp
-### password: 123456
-## Body: Message to send ;)
+### url: http://localhost:8080/api/msg/send
+### basic auth:
+#### user: pp
+#### password: 123456
+### Body: Message to send ;)
+
+the messsage will be received through post by "demo", sent to the RabbitMQ queue, and received by "jms_demo"... to just echo it.
+
+## Test - send with timeToLive=5 secs & recover from DeadLetterQueue
+
+Post
+### url: http://localhost:8080/api/msg/send_ephemeral
+### basic auth:
+#### user: pp
+#### password: 123456
+### Body: Message to send ;)
+
+Wait 5 secs
+
+You can check the queues from http://localhost:15672/#/queues
+
+GET
+### url: http://localhost:8080/api/msg/recover
 
 the messsage will be received through post by "demo", sent to the RabbitMQ queue, and received by "jms_demo"... to just echo it.

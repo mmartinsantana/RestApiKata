@@ -11,6 +11,11 @@ public class Receiver {
 
   public void receiveMessage(String message) {
     System.out.println("Received <" + message + ">");
+
+    if (message.equals("plof")) {
+      throw new RuntimeException("plof");
+    }
+
     latch.countDown();
   }
 
