@@ -103,3 +103,6 @@ POST to http://localhost:8080/api/msg/send
 Inspired on https://spring.io/guides/gs/messaging-rabbitmq
 
 Listens to "spring-boot-exchange" topic "foo.bar.baz"
+
+### RabbitMQ can just run as container
+docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.11-management

@@ -1,0 +1,14 @@
+# mvn package -Pprod
+# docker-compose up --build
+# docker-compose down
+
+version: '1'
+
+services:
+  demo:
+    container_name: jms_demo
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: jms_demo:latest
+    network_mode: host

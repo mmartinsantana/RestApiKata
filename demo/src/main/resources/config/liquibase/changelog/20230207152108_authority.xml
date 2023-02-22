@@ -34,7 +34,7 @@
     <addForeignKeyConstraint baseTableName="app_user_authorities" baseColumnNames="app_user_id" constraintName="app_user_authorities_app_user_id_fk" referencedTableName="app_user" referencedColumnNames="id" />
     <addForeignKeyConstraint baseTableName="app_user_authorities" baseColumnNames="authorities_id" constraintName="app_user_authorities_authorities_id_fk" referencedTableName="authority" referencedColumnNames="id" />
     </changeSet>
-    <changeSet id="20230207152108-2" author="Mario" context="test" runAlways="false" runOnChange="true">
+    <changeSet id="20230207152108-2" author="Mario" runAlways="false" runOnChange="true">
         <loadData
                 file="config/liquibase/test-data/authority.csv"
                 separator=";"
@@ -42,8 +42,8 @@
                 usePreparedStatements="false">
         </loadData>
         <sql dbms="h2">alter sequence authority_sequence restart with (select max(id)+1 from authority)</sql>
-
-
+    </changeSet>
+    <changeSet id="20230207152108-2" author="Mario" runAlways="false" runOnChange="true" context="test">
         <loadData
                 file="config/liquibase/test-data/app_user_authorities.csv"
                 separator=";"
