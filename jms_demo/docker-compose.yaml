@@ -13,6 +13,8 @@ services:
     image: jms_demo:latest
     networks:
       - some-net
+    environment:
+      - RABBITMQ_HOST=rabbitmq
 networks:
   some-net:
     external:

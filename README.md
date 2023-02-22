@@ -118,6 +118,6 @@ Listens to "spring-boot-exchange" topic "foo.bar.baz"
 ## RabitMQ
 Just run ;)
 ## jms_demo
-'mvn package -DskipTests'
+'mvn package'
 'docker-compose build'
 'docker-compose up'

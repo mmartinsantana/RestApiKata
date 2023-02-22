@@ -20,6 +20,7 @@ services:
     environment:
       - DB_HOST=db
       - DB_PORT=5432
+      - RABBITMQ_HOST=rabbitmq
   db:
     container_name: db
     image: postgres
