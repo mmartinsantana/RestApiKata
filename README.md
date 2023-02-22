@@ -107,28 +107,28 @@ Listens to "spring-boot-exchange" topic "foo.bar.baz"
 ## Build from cli
 
 ### demo
-'mvn package -Pprod'
-'docker-compose build'
-'docker-compose up'
+- `mvn package -Pprod`
+- `docker-compose build`
+- `docker-compose up`
 ### RabitMQ
-Just run ;)
+- Already built ;)
 ### jms_demo
-'mvn package'
-'docker-compose build'
-'docker-compose up'
+- `mvn package`
+- `docker-compose build`
+- `docker-compose up`
 
 ## Run
 1. Launch demo
-2. Launch RabitMQ: docker run -it --rm --name rabbitmq --network custom_network -p 5672:5672 -p 15672:15672 rabbitmq:3.11-management
+2. Launch RabitMQ: `docker run -it --rm --name rabbitmq --network custom_network -p 5672:5672 -p 15672:15672 rabbitmq:3.11-management`
 3. Launch jms_demo
 
 ## Test
 
 Post
-## url: http://localhost:8080/api/msg/send
-## basic auth:
-### user: pp
-### password: 123456
-## Body: Message to send ;)
+- url: http://localhost:8080/api/msg/send
+- basic auth:
+   - user: pp
+   - password: 123456
+- Body: Message to send ;)
 
 the messsage will be received through post by "demo", sent to the RabbitMQ queue, and received by "jms_demo"... to just echo it.
